@@ -1,0 +1,39 @@
+.notfound_main{
+    height: 100vh;
+}
+.notfound_main img{
+    width: 150px;
+}
+
+.notfound_main .container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.notfound_main h1{
+    font-size: 120px;
+    color: lightgrey;
+    margin-bottom: 0;
+    font-weight: bolder;
+}
+
+.notfound_main h3{
+    font-size: 45px;
+    font-weight: 700;
+}
+
+.notfound_main p{
+    font-size: 20px;
+}
+
+.notfound_main button{
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 7px 40px;
+    text-transform: uppercase;
+    border-radius: 10px;
+}

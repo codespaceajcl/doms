@@ -1,0 +1,349 @@
+.form_main {
+    margin-top: 20px;
+}
+
+.form_main .download_btn {
+    text-align: end;
+}
+
+.announcement_div {
+    background-color: #DDF1FF;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.announcement_div button {
+    border-radius: 5px;
+    background: #0094FF;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 3px 10px;
+    display: flex;
+    align-items: center;
+}
+
+.announcement_div p {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.stepper-wrapper {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+.stepper-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    cursor: pointer;
+
+}
+
+.stepper-item::before {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #ccc;
+    width: 100%;
+    top: 20px;
+    left: -50%;
+    z-index: 2;
+}
+
+.stepper-item::after {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #D9D9D9;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: 2;
+}
+
+.stepper-item .step-counter {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #D9D9D9;
+    margin-bottom: 6px;
+    color: #787878;
+    font-weight: 600;
+}
+
+.stepper-item.active {
+    font-weight: bold;
+}
+
+.stepper-item .step-name {
+    font-size: 15px;
+}
+
+.stepper-item.completed .step-counter {
+    background-color: #739B21;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* .stepper-item.completed::after {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #4bb543;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: 3;
+} */
+
+.stepper-item:first-child::before {
+    content: none;
+}
+
+.stepper-item:last-child::after {
+    content: none;
+}
+
+.form_main .registration_form {
+    border-radius: 10px;
+    background: #FFF;
+    box-shadow: 0px 10px 20px 0px rgba(194, 194, 194, 0.16), 0px 0px 30px 0px rgba(170, 170, 170, 0.16);
+}
+
+.form_main .registration_form .heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #E0E4EC;
+    padding: 8px 12px;
+}
+
+.form_main .registration_form .heading h5 {
+    margin-bottom: 0;
+    font-weight: 600;
+    font-size: 19px;
+}
+
+.form_main .registration_form .heading div {
+    display: flex;
+    gap: 4px;
+}
+
+.form_main .registration_form .heading div button {
+    border: 1px solid #739B21;
+    color: #739B21;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background-color: #fff;
+    font-weight: 500;
+    padding: 3px 15px;
+    border-radius: 5px;
+}
+
+.form_main .registration_form .heading div button:last-child {
+    background-color: #0094FF;
+    color: #fff;
+    border: 1px solid #0094FF;
+}
+
+.registration_form .content {
+    padding: 15px 10px;
+}
+
+.registration_form .content p {
+    margin-bottom: 0;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    color: #0094FF;
+    font-weight: 500;
+}
+
+.registration_form .content .form-label {
+    margin-bottom: 1px;
+    color: #000;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.registration_form .content .form-control {
+    font-size: 13px;
+    padding: 8px 10px;
+    border: 1px solid #787878;
+    color: #787878;
+}
+
+.registration_form .content .form-control:focus{
+    box-shadow: none;
+    border: 1px solid #739B21;
+}
+
+.registration_form .content .form-control::placeholder {
+    color: #787878;
+}
+
+.registration_form .content .form-control:disabled {
+    background-color: #EEE;
+    border: none;
+}
+
+.registration_form .content .next_btn {
+    display: flex;
+    gap: 10px;
+}
+
+.registration_form .content .next_btn button {
+    background-color: #739B21;
+    border: none;
+    color: #fff;
+    padding: 7px 45px;
+    font-size: 13px;
+    border-radius: 7px;
+    font-weight: 600;
+}
+
+.registration_form .content .next_btn button:last-child {
+    background-color: #EEEEEE;
+    color: #787878;
+}
+
+.registration_form .edit_profile_img .edit_profile_btn{
+    border: 1px solid #CFCFCF;
+    background: #E6E6E6;
+    padding: 4px 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #4C535F;
+    font-weight: 500;
+    font-size: 13px;
+    justify-content: center;
+    width: 100%;
+    cursor: pointer;
+}
+
+.registration_form .edit_profile_img{
+    border: 1px solid #D9D9D9;
+    width: fit-content;
+    margin-left: auto;
+}
+
+.registration_form .edit_profile_img img{
+    padding: 6px;
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    max-width: 150px;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+}
+
+.form_main .tab_show{
+    position: relative;
+}
+
+.form_main .preview_show{
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-image: #000;
+    background-color: #00000078;
+    height: 100%;
+}
+
+.form_main .preview_show .preview_show_data{
+    max-width: 400px;
+    position: relative;
+}
+
+.form_main .preview_show .preview_show_data svg{
+    color: #fff;
+    position: absolute;
+    right: -20px;
+    top: 5px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.preview_show .preview_btn {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 10px;
+}
+
+.preview_show .preview_btn button{
+    width: 50%;
+    background-color: #0094FF;
+    color: #fff;
+    border: none;
+    padding: 7px 0;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 10px;
+}
+
+.preview_show .preview_btn button.discard{
+    background-color: #FF5858;
+}
+
+.registration_form .success_msg{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+}
+
+.registration_form .success_msg h5{
+    text-align: center;
+    margin-bottom: 0;
+    color: #787878;
+    font-size: 17px;
+}
+
+.registration_form .success_msg h3{
+    font-weight: 700;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.registration_form .success_btn{
+    display: flex;
+    gap: 10px;
+}
+
+.registration_form .success_btn button{
+    background-color: #739B21;
+    border: none;
+    color: #fff;
+    padding: 7px 45px;
+    font-size: 13px;
+    border-radius: 7px;
+    font-weight: 600;
+}
+
+.registration_form .success_btn button:last-child {
+    background-color: #EEEEEE;
+    color: #787878;
+}

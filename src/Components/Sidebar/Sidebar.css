@@ -1,0 +1,25 @@
+.sidebar_main ul{
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar_main ul li{
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    color: hsla(0, 0%, 47%, 1);
+    font-weight: 600;
+}
+
+.sidebar_main ul li svg{
+    font-size: 18px;
+}
+
+.sidebar_main ul li.side_active{
+    background-color: #F9F9F9;
+    color: #739B21;
+    border-right: 2px solid #739B21;
+}

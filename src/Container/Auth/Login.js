@@ -1,17 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Auth.css'
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { TbWorld } from "react-icons/tb";
 import { MdEmail } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
+import { errorNotify, successNotify } from '../../Utils/Toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthLogin } from '../../Redux/Action/auth';
 
 const Login = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const userFound = JSON.parse(localStorage.getItem("user"))
 
-    const loginHandler = () => {
-        navigate('/user/form')
+    const { loading, getLoginData, error } = useSelector((state) => state.loginData)
+
+    useEffect(() => {
+        if (userFound) {
+            navigate('/dashboard')
+        }
+    }, [])
+
+    useEffect(() => {
+        if (getLoginData) {
+            successNotify("Login Successfully!")
+            dispatch({ type: "LOGIN_RESET" })
+            navigate('/dashboard')
+        }
+        else if (error) {
+            errorNotify(error)
+            dispatch({ type: "LOGIN_RESET" })
+        }
+    }, [getLoginData])
+
+    const loginHandler = (e) => {
+        e.preventDefault();
+        if (email.length === 0 || password.length === 0) {
+            errorNotify('fill out both fields')
+            return
+        }
+
+        const formData = new FormData();
+        formData.append("email", email)
+        formData.append("password", password)
+
+        dispatch(AuthLogin(formData))
+
     }
 
     return (
@@ -31,16 +69,16 @@ const Login = () => {
                             <Form onSubmit={loginHandler}>
                                 <Form.Group className="mb-3" controlId="formBasicEmail">
                                     <Form.Label>Email address</Form.Label>
-                                    <Form.Control type="email" placeholder="Enter Email" />
+                                    <Form.Control type="email" placeholder="Enter Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                                 </Form.Group>
 
                                 <Form.Group className="mb-3" controlId="formBasicPassword">
                                     <Form.Label>Password</Form.Label>
-                                    <Form.Control type="password" placeholder="Enter Password" />
+                                    <Form.Control type="password" placeholder="Enter Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                                 </Form.Group>
                                 <p>Forgot Password?</p>
                                 <Button variant="primary" type="submit">
-                                    LOGIN
+                                    {loading ? <Spinner animation='border' size='sm' /> : 'LOGIN'}
                                 </Button>
                             </Form>
 
