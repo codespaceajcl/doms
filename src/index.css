@@ -31,3 +31,13 @@ img {
 .dashboard_div .right_dashboard {
   width: 80%;
 }
+
+@media (max-width: 992px) {
+  .dashboard_div .left_dashboard {
+    display: none;
+  }
+
+  .dashboard_div .right_dashboard{
+    width: 100%;
+  }
+}

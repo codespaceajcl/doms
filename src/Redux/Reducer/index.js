@@ -1,14 +1,19 @@
 import { combineReducers } from "redux";
-import { LoginReducer } from "./auth";
-import { formCreateReducer } from "./Dashboard";
+import { LoginReducer, RegisterReducer } from "./auth";
+import { applicationGetReducer, formCreateReducer, formSaveReducer } from "./Dashboard";
 
 const rootReducer = combineReducers({
 
     //AUTH
     loginData: LoginReducer,
+    registerData: RegisterReducer,
 
     //FORM
-    postForm: formCreateReducer
+    postForm: formCreateReducer,
+    saveForm: formSaveReducer,
+
+    //TABLE
+    getTable: applicationGetReducer
 
 })
 

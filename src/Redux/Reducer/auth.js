@@ -29,3 +29,35 @@ export const LoginReducer = (state = {}, action) => {
             return state
     }
 }
+
+export const RegisterReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "REGISTER_REQUEST":
+            return {
+                loading: true,
+                error: false
+            }
+        case "REGISTER_SUCCESS":
+            return {
+                ...state,
+                loading: false,
+                getRegisterData: action.payload,
+                error: false
+            }
+        case "REGISTER_FAILED":
+            return {
+                ...state,
+                loading: false,
+                getRegisterData: null,
+                error: action.payload
+            }
+        case "REGISTER_RESET":
+            return {
+                ...state,
+                getRegisterData: null,
+                error: null
+            }
+        default:
+            return state
+    }
+}

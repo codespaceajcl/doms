@@ -2,10 +2,17 @@ import React from 'react';
 import { dashboardSidebar } from '../../Container/Dashboard/Routes/Routes';
 import './Sidebar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { successNotify } from '../../Utils/Toast';
 
 const Sidebar = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
+
+    const logoutHandler = () => {
+        localStorage.clear();
+        navigate('/')
+        successNotify("Logout Successfully!")
+    }
 
     return (
         <div className='sidebar_main'>
@@ -14,7 +21,7 @@ const Sidebar = () => {
                     dashboardSidebar?.map((s) => {
                         return (
                             <li className={pathname === s.path ? 'side_active' : ''}
-                                onClick={s.path.length > 0 ? () => navigate(s.path) : () => navigate('/')}>
+                                onClick={s.path.length > 0 ? () => navigate(s.path) : logoutHandler}>
                                 {s.icon}
                                 {s.title}
                             </li>

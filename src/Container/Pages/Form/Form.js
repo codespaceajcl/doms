@@ -1,13 +1,18 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Col, Row, Form, Spinner } from 'react-bootstrap';
 import { MdClose } from "react-icons/md";
 import './Form.css';
 import { useNavigate } from 'react-router-dom';
-import { errorNotify } from '../../../Utils/Toast';
+import { errorNotify, successNotify } from '../../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormCreate } from '../../../Redux/Action/Dashboard';
+import { FormCreate, FormSave } from '../../../Redux/Action/Dashboard';
 import { pdfjs } from 'react-pdf';
 import { Document, Page } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import { FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft } from "react-icons/fa";
+import Loader from '../../../Utils/Loader';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -18,6 +23,7 @@ const RegistrationForm = () => {
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
+  const [previewPdf, setPreviewPdf] = useState('')
   const [tab, setTab] = useState('registration');
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
@@ -27,13 +33,38 @@ const RegistrationForm = () => {
   }
 
   const { loading, formCreateData } = useSelector((state) => state.postForm)
+  const { loading: saveLoading, formSaveData } = useSelector((state) => state.saveForm)
 
-  console.log(formCreateData)
+  useEffect(() => {
+    if (previewPdf.length > 0) {
+      setTab('preview')
+      dispatch({ type: "FORM_POST_RESET" })
+    }
+  }, [previewPdf])
+
+  useEffect(() => {
+    if (formCreateData?.response === 'success') {
+      setPreviewPdf(formCreateData?.link)
+
+    }
+    else if (formCreateData?.response === 'error') {
+      errorNotify(formCreateData?.message)
+      dispatch({ type: "FORM_POST_RESET" })
+    }
+  }, [formCreateData])
+
+  useEffect(() => {
+    if (formSaveData?.response === 'success') {
+      setTab('submit')
+      dispatch({ type: "FORM_SAVE_RESET" })
+      successNotify("Application Added Successfully!")
+    }
+  }, [formSaveData])
 
   const [formField, setFormField] = useState({
-    referenceNo: "CDA/DLR/(1022)I-12/1/115",
-    serialNo: "0431",
-    date: '2011-01-01',
+    referenceNo: "",
+    serialNo: "",
+    date: '2023-01-01',
     fullName: "",
     fatherName: "",
     address: "",
@@ -41,7 +72,7 @@ const RegistrationForm = () => {
     state: "",
     country: "",
     cdaSerialNo: "",
-    videOrderDate: "2011-01-01",
+    videOrderDate: "2023-01-01",
     plot: "",
     street: "",
     sector: "",
@@ -97,8 +128,40 @@ const RegistrationForm = () => {
     registerData.append("email", currentUser.email)
 
     dispatch(FormCreate(registerData))
+  }
 
-    // setTab('preview')
+  const saveFormHandler = () => {
+    const isAnyFieldEmpty = Object.values(formField).some(value => value === "");
+    if (isAnyFieldEmpty || !profileImage) {
+      errorNotify("Please Filled up all fields");
+      return;
+    }
+
+    const registerData = new FormData();
+
+    for (const key in formField) {
+      if (formField.hasOwnProperty(key)) {
+        registerData.append(key, formField[key]);
+      }
+    }
+    registerData.append("profile", profileImage)
+    registerData.append("token", currentUser.token)
+    registerData.append("email", currentUser.email)
+
+    dispatch(FormSave(registerData))
+
+  }
+
+  const pageDecrease = () => {
+    if (pageNumber > 1) {
+      setPageNumber(pageNumber - 1)
+    }
+  }
+
+  const pageIncrease = () => {
+    if (pageNumber !== numPages) {
+      setPageNumber(pageNumber + 1)
+    }
   }
 
   return (
@@ -140,8 +203,6 @@ const RegistrationForm = () => {
           </div>
         </Col>
       </Row>
-
-      <button onClick={() => setTab("preview")}>open preview</button>
 
       <div className='tab_show'>
         {
@@ -200,7 +261,7 @@ const RegistrationForm = () => {
             <div className='content'>
               <Row>
                 <Col md={12}>
-                  <p>
+                  {/* <p>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <mask id="mask0_328_2959" style={{ maskType: "alpha" }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
                         <rect width="24" height="24" fill="#D9D9D9" />
@@ -209,41 +270,57 @@ const RegistrationForm = () => {
                         <path d="M11 17H13V11H11V17ZM12 9C12.2833 9 12.5208 8.90417 12.7125 8.7125C12.9042 8.52083 13 8.28333 13 8C13 7.71667 12.9042 7.47917 12.7125 7.2875C12.5208 7.09583 12.2833 7 12 7C11.7167 7 11.4792 7.09583 11.2875 7.2875C11.0958 7.47917 11 7.71667 11 8C11 8.28333 11.0958 8.52083 11.2875 8.7125C11.4792 8.90417 11.7167 9 12 9ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22Z" fill="#0094FF" />
                       </g>
                     </svg>
-                    Ref# No. CDA/DLR/(1022)I-12/1/110
-                  </p>
+                    Ref# No. {formField?.referenceNo}
+                  </p> */}
                 </Col>
               </Row>
-              <Row className='align-items-end'>
-                <Col md={4}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Serial No</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Serial No" disabled value={'0431'} />
-                  </Form.Group>
+              <Row className='align-items-end make_reverse'>
+                <Col md={8}>
+                  <Row>
+                    <Col md={12}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Ref No</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Reference No"
+                          name="referenceNo" value={formField.referenceNo} onChange={formFieldHandler} />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Serial No</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Serial No" value={formField.serialNo} name='serialNo' onChange={formFieldHandler} />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Date</Form.Label>
+                        <Form.Control type="date"
+                          name="date" value={formField.date} onChange={formFieldHandler} />
+                      </Form.Group>
+                    </Col>
+                  </Row>
                 </Col>
                 <Col md={4}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Date</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Date" disabled value={'8-Dec-2014'} />
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <div className='edit_profile_img mb-3'>
-                    <label className="edit_profile_btn">
-                      Upload Profile
-                      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <mask id="mask0_328_2954" style={{ maskType: "alpha" }} maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
-                          <rect width="16" height="16" fill="#D9D9D9" />
-                        </mask>
-                        <g mask="url(#mask0_328_2954)">
-                          <path d="M3.33333 12.6667H4.28333L10.8 6.15L9.85 5.2L3.33333 11.7167V12.6667ZM2 14V11.1667L10.8 2.38333C10.9333 2.26111 11.0806 2.16667 11.2417 2.1C11.4028 2.03333 11.5722 2 11.75 2C11.9278 2 12.1 2.03333 12.2667 2.1C12.4333 2.16667 12.5778 2.26667 12.7 2.4L13.6167 3.33333C13.75 3.45556 13.8472 3.6 13.9083 3.76667C13.9694 3.93333 14 4.1 14 4.26667C14 4.44444 13.9694 4.61389 13.9083 4.775C13.8472 4.93611 13.75 5.08333 13.6167 5.21667L4.83333 14H2ZM10.3167 5.68333L9.85 5.2L10.8 6.15L10.3167 5.68333Z" fill="#787878" />
-                        </g>
-                      </svg>
-                    </label>
-                    <div onClick={handleImageClick}>
-                      <img src={profileImagePreview ? profileImagePreview : '/images/default_image.png'} alt='' />
-                    </div>
-                  </div>
+                  <Row className='align-items-end'>
+                    <Col md={12}>
+                      <div className='edit_profile_img mb-3'>
+                        <label className="edit_profile_btn">
+                          Upload Profile
+                          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <mask id="mask0_328_2954" style={{ maskType: "alpha" }} maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
+                              <rect width="16" height="16" fill="#D9D9D9" />
+                            </mask>
+                            <g mask="url(#mask0_328_2954)">
+                              <path d="M3.33333 12.6667H4.28333L10.8 6.15L9.85 5.2L3.33333 11.7167V12.6667ZM2 14V11.1667L10.8 2.38333C10.9333 2.26111 11.0806 2.16667 11.2417 2.1C11.4028 2.03333 11.5722 2 11.75 2C11.9278 2 12.1 2.03333 12.2667 2.1C12.4333 2.16667 12.5778 2.26667 12.7 2.4L13.6167 3.33333C13.75 3.45556 13.8472 3.6 13.9083 3.76667C13.9694 3.93333 14 4.1 14 4.26667C14 4.44444 13.9694 4.61389 13.9083 4.775C13.8472 4.93611 13.75 5.08333 13.6167 5.21667L4.83333 14H2ZM10.3167 5.68333L9.85 5.2L10.8 6.15L10.3167 5.68333Z" fill="#787878" />
+                            </g>
+                          </svg>
+                        </label>
+                        <div onClick={handleImageClick}>
+                          <img src={profileImagePreview ? profileImagePreview : '/images/default_image.png'} alt='' />
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
 
@@ -292,8 +369,8 @@ const RegistrationForm = () => {
                 </Col>
                 <Col md={4}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Serial No</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Serial No"
+                    <Form.Label>CDA Serial No</Form.Label>
+                    <Form.Control type="text" placeholder="Enter CDA Serial No"
                       name="cdaSerialNo" value={formField.cdaSerialNo} onChange={formFieldHandler} />
                   </Form.Group>
                 </Col>
@@ -345,17 +422,19 @@ const RegistrationForm = () => {
         {
           tab === 'preview' && <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
             <div className='preview_show_data'>
-              <MdClose onClick={() => setTab('registration')} />
+              <MdClose onClick={() => setTab('registration')} className='close_icon' />
 
-              {/* <img src='/images/preview_img.png' alt='' /> */}
-              <Document file="https://crms.ajcl.net/doms/directorateOfLandAndRehabilitationPreviews/yj1Nmd00XLVPHmsi.pdf" onLoadSuccess={onDocumentLoadSuccess}>
+              <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
                 <Page pageNumber={pageNumber} />
               </Document>
-              <p>
-                Page {pageNumber} of {numPages}
-              </p>
-              <div className='preview_btn'>
-                <button onClick={() => setTab('submit')}>Save</button>
+
+              <div className='pdf_chevron'>
+                <FaChevronLeft onClick={pageDecrease} />
+                <FaChevronRight onClick={pageIncrease} />
+              </div>
+
+              <div className='preview_btn mt-2'>
+                <button onClick={saveFormHandler}> {saveLoading ? <Spinner animation='border' size='sm' /> : "Save"} </button>
                 <button className='discard' onClick={() => setTab('registration')}>Discard</button>
               </div>
             </div>

@@ -6,6 +6,8 @@ import Form from './Container/Pages/Form/Form';
 import Table from './Container/Pages/Table/Table';
 import Dashboard from './Container/Dashboard/Dashboard';
 import { ToastContainer } from "react-toastify";
+import NotFound from './Container/Pages/NotFound/NotFound';
+import Register from './Container/Auth/Register';
 
 const App = () => {
   return (
@@ -30,6 +32,9 @@ const App = () => {
         </Route>
 
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

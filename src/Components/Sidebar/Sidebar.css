@@ -23,3 +23,10 @@
     color: #739B21;
     border-right: 2px solid #739B21;
 }
+
+@media (max-width: 1000px) {
+    .sidebar_main ul li{
+        padding: 10px 5px;
+        font-size: 14px;
+    }
+}

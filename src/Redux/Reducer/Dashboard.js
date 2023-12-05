@@ -27,3 +27,57 @@ export const formCreateReducer = (state = {}, action) => {
             return state;
     }
 }
+
+export const formSaveReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "FORM_SAVE_REQUEST":
+            return {
+                ...state,
+                loading: true,
+            };
+        case "FORM_SAVE_SUCCESS":
+            return {
+                ...state,
+                loading: false,
+                formSaveData: action.payload,
+            };
+        case "FORM_SAVE_FAILED":
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+        case "FORM_SAVE_RESET":
+            return {
+                ...state,
+                formSaveData: null,
+                error: null
+            };
+        default:
+            return state;
+    }
+}
+
+export const applicationGetReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "APPLICATION_GET_REQUEST":
+            return {
+                ...state,
+                loading: true,
+            };
+        case "APPLICATION_GET_SUCCESS":
+            return {
+                ...state,
+                loading: false,
+                tableGetData: action.payload,
+            };
+        case "APPLICATION_GET_FAILED":
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+        default:
+            return state;
+    }
+}

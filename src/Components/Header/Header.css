@@ -1,67 +1,222 @@
-.dropdown-menu.show{
+.dropdown-menu.show {
     left: auto;
     right: 0;
 }
 
-.dropdown-menu.show .dropdown-item a{
+.dropdown-menu.show .dropdown-item:active{
+    background-color: transparent;
+}
+
+.dropdown-menu.show .dropdown-item a {
     color: #000;
     text-decoration: none;
 }
 
-.main_header{
+.main_header {
     background-color: #fff;
     padding: 3px 0;
     box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.16);
 }
 
-.main_header .navbar-brand{
+.main_header .navbar-brand {
     padding: 0;
 }
 
-.main_header .navbar-brand img{
+.main_header .navbar-brand img {
     width: 75px;
 }
 
-.main_header .navbar-brand > div{
+.main_header .navbar-brand>div {
     display: flex;
     align-items: center;
 }
 
-.main_header .navbar-brand > div p{
+.main_header .navbar-brand>div p {
     font-size: 12px;
     margin-bottom: 0;
 }
 
-.main_header .navbar-brand > div h6{
+.main_header .navbar-brand>div h6 {
     text-transform: uppercase;
     font-weight: 700;
     margin-bottom: 0;
 }
 
-.main_header .user_detail{
+.main_header .user_detail {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.main_header .user_detail .user_img{
+.main_header .user_detail .user_img {
     display: flex;
     align-items: center;
     /* gap: 5px; */
 }
 
-.main_header .user_detail p{
+.main_header .user_detail p {
     margin-bottom: 0;
     font-size: 13px;
 }
 
-.main_header .user_detail h6{
+.main_header .user_detail h6 {
     font-size: 15px;
     font-weight: 600;
     color: #000;
     margin-bottom: 0;
+    text-transform: capitalize;
 }
 
-.main_header .user_detail img{
+.main_header .user_detail img {
     width: 45px;
+}
+
+.overlay {
+    height: 100vh;
+    width: 0;
+    position: fixed;
+    z-index: 999999;
+    top: 0;
+    left: 0;
+    background-color: #000;
+    overflow-x: hidden;
+    transition: 0.3s;
+}
+
+.overlay-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    margin: 80px 0 0 20px;
+}
+
+.overlay .nav-link {
+    padding: 6px 0 !important;
+    text-decoration: none !important;
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    color: white !important;
+    display: block !important;
+    transition: 0.6s !important;
+    border-radius: 0px !important;
+    border: none !important;
+    background: transparent !important;
+    text-transform: none !important;
+    margin: 0 !important;
+    margin-bottom: 10px !important;
+}
+
+.overlay .nav-active {
+    font-size: 22px !important;
+    color: #739B21 !important;
+    margin: 0;
+    padding: 6px 0 !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+}
+
+.overlay-content a:hover {
+    color: #0096d8;
+}
+
+.overlay-dropdown-item {
+    padding: 5px 0 !important;
+}
+
+.overlay .closebtn {
+    position: absolute;
+    top: 0px;
+    right: 25px;
+    font-size: 60px;
+    color: white;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.overlay .closebtn svg {
+    color: white !important;
+    font-size: 35px;
+}
+
+.overlay-content-number {
+    color: #fff;
+}
+
+.mobile_sidebar_logout_btn {
+    margin-top: 15px;
+    padding: 7px 60px;
+    border-radius: 6px;
+    border: none;
+    background-color: #e91c23;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 18px;
+    width: fit-content;
+}
+
+.mobile_sidebar_avatar {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    background-color: #212121;
+    width: 80px;
+    height: 80px;
+    border-radius: 100%;
+    border: 2px solid #fff;
+}
+
+.mobile_sidebar_avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.navbar-collapse.collapse.show {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .main_header .container{
+        max-width: 950px;
+    }
+}
+
+@media (max-width: 500px) {
+    .main_header .navbar-brand img {
+        width: 60px;
+    }
+
+    .main_header .navbar-brand>div p{
+        font-size: 11px;
+    }
+
+    .main_header .navbar-brand>div h6{
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 400px) {
+    .main_header .navbar-brand>div p {
+        font-size: 10px;
+    }
+
+    .main_header .navbar-brand>div h6 {
+        font-size: 11px;
+    }
+
+    .navbar-toggler{
+        padding: 3px !important;
+    }
+
+    .navbar-toggler-icon{
+        width: 25px;
+        height: 20px;
+    }
 }

@@ -3,6 +3,8 @@
     background: #FFF;
     box-shadow: 0px 10px 20px 0px rgba(194, 194, 194, 0.16), 0px 0px 30px 0px rgba(170, 170, 170, 0.16);
     margin-top: 20px;
+    min-height: 600;
+    position: relative;
 }
 
 .table_main .application_main .heading {
@@ -34,17 +36,25 @@
     border: none;
 }
 
+.application_main .search_tables div svg{
+    cursor: pointer;
+}
+
 .application_main .search_tables div:first-child input {
     font-size: 14px;
     color: #787878;
     width: 220px;
 }
 
-.application_main .search_tables div:last-child input {
+.application_main .search_tables div:first-child input:focus-visible{
+    outline: none;
+}
+
+/* .application_main .search_tables div:last-child input {
     font-size: 14px;
     color: #787878;
     width: 100px;
-}
+} */
 
 .application_table{
     margin-top: 30px;
@@ -54,7 +64,7 @@
     text-transform: uppercase;
     padding: 10px 5px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .application_table tbody tr td{
@@ -64,7 +74,7 @@
 }
 
 .application_table tbody tr td svg{
-    font-size: 18px;
+    font-size: 21px;
     cursor: pointer;
 }
 
@@ -102,4 +112,36 @@
 
 .application_table tbody tr{
     vertical-align: middle;
+}
+
+.pagination{
+    display: flex;
+    justify-content: end;
+    padding: 10px 30px;
+    gap: 12px;
+}
+
+.pagination .previous.disabled a, .pagination .next.disabled a{
+    color: lightgrey;
+    text-decoration: none;
+}
+
+.pagination .previous a{
+    color: #739B21;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.pagination .next a{
+    color: #739B21;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.pagination li.active a {
+    background-color: #dfd9d954;
+    padding: 2px 7px;
+    border-radius: 100px;
+    font-weight: 600;
+    color: #739B21;
 }

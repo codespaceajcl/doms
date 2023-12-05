@@ -57,10 +57,12 @@ const Login = () => {
             <Container>
                 <Row className='align-items-center justify-content-center'>
                     <Col md={7}>
-                        <img src='/images/cdc_logo.png' alt='' />
-                        <h1><span>Welcome To</span> <br />
-                            Capital Development Authority <br /> <span>Islamabad</span>
-                        </h1>
+                        <div className='left_form'>
+                            <img src='/images/cdc_logo.png' alt='' />
+                            <h1><span>Welcome To</span> <br />
+                                Capital Development Authority <br /> <span>Islamabad</span>
+                            </h1>
+                        </div>
                     </Col>
                     <Col md={5}>
                         <div className='login_form'>
@@ -76,11 +78,13 @@ const Login = () => {
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control type="password" placeholder="Enter Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                                 </Form.Group>
-                                <p>Forgot Password?</p>
+                                {/* <p>Forgot Password?</p> */}
                                 <Button variant="primary" type="submit">
                                     {loading ? <Spinner animation='border' size='sm' /> : 'LOGIN'}
                                 </Button>
                             </Form>
+
+                            <h6>Don't have an account? <a onClick={() => navigate('/register')}> Register </a></h6>
 
                             <h6>Need guidance? <a href='https://www.cda.gov.pk/eservices/askcda.asp' target='_blank'>
                                 ask CDA</a></h6>
