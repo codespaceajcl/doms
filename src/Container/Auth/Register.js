@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { errorNotify, successNotify } from '../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthRegister } from '../../Redux/Action/auth';
+import cdaLogo from "../../images/cdc_logo.png";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -83,7 +84,7 @@ const Register = () => {
                 <Row className='align-items-center justify-content-center'>
                     <Col md={6}>
                         <div className='left_form'>
-                            <img src='/images/cdc_logo.png' alt='' />
+                            <img src={cdaLogo} alt='' />
                             <h1><span>Welcome To</span> <br />
                                 Capital Development Authority <br /> <span>Islamabad</span>
                             </h1>
@@ -139,7 +140,7 @@ const Register = () => {
                                     </Col>
                                 </Row>
 
-                                <Button variant="primary" type="submit">
+                                <Button variant="primary" type="submit" disabled={loading}>
                                     {loading ? <Spinner animation='border' size='sm' /> : 'Register'}
                                 </Button>
                             </Form>

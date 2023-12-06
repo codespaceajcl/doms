@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { successNotify } from "../../Utils/Toast";
+import userAvatar from "../../images/user_avatar.png"
 
 function MobileSidebar({ navbarRef, NavHandler, sideBarItems }) {
     const { pathname } = useLocation();
@@ -27,7 +28,7 @@ function MobileSidebar({ navbarRef, NavHandler, sideBarItems }) {
             <div className={"overlay-content"}>
                 <div className="d-flex align-items-center text-white gap-2 mb-3">
                     <div className="mobile_sidebar_avatar">
-                        <img src="/images/user_avatar.png" alt="" />
+                        <img src={userAvatar} alt="" />
                     </div>
                     <div>
                         <NavDropdown title={currentUser?.name}>

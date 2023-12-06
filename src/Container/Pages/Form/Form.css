@@ -1,36 +1,9 @@
-.form_main {
+/* .form_main {
     margin-top: 20px;
-}
+} */
 
 .form_main .download_btn {
     text-align: end;
-}
-
-.announcement_div {
-    background-color: #DDF1FF;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.announcement_div button {
-    border-radius: 5px;
-    background: #0094FF;
-    color: #fff;
-    border: none;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 3px 10px;
-    display: flex;
-    align-items: center;
-}
-
-.announcement_div p {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 0;
 }
 
 .stepper-wrapper {

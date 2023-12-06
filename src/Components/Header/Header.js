@@ -5,6 +5,8 @@ import './Header.css';
 import { successNotify } from '../../Utils/Toast';
 import MobileSidebar from './MobileSidebar';
 import { dashboardSidebar } from '../../Container/Dashboard/Routes/Routes';
+import mainLogo from "../../images/main_logo.jpg";
+import userAvatar from "../../images/user_avatar.png";
 
 const Header = () => {
     const currentUser = JSON.parse(localStorage.getItem("user"))
@@ -34,7 +36,7 @@ const Header = () => {
                 <Container>
                     <Navbar.Brand>
                         <div>
-                            <img src='/images/main_logo.jpg' alt='' />
+                            <img src={mainLogo} alt='' />
 
                             <div>
                                 <p>Government Of Pakistan</p>
@@ -54,7 +56,7 @@ const Header = () => {
                                 </div>
 
                                 <div className='user_img'>
-                                    <img src='/images/user_avatar.png' alt='' />
+                                    <img src={userAvatar} alt='' />
                                     <NavDropdown title="" id="basic-nav-dropdown">
                                         <NavDropdown.Item onClick={logoutHandler}>
                                             <Link>Logout</Link>

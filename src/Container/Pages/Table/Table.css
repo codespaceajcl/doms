@@ -3,7 +3,7 @@
     background: #FFF;
     box-shadow: 0px 10px 20px 0px rgba(194, 194, 194, 0.16), 0px 0px 30px 0px rgba(170, 170, 170, 0.16);
     margin-top: 20px;
-    min-height: 600;
+    min-height: 600px;
     position: relative;
 }
 
@@ -36,7 +36,7 @@
     border: none;
 }
 
-.application_main .search_tables div svg{
+.application_main .search_tables div svg {
     cursor: pointer;
 }
 
@@ -46,7 +46,7 @@
     width: 220px;
 }
 
-.application_main .search_tables div:first-child input:focus-visible{
+.application_main .search_tables div:first-child input:focus-visible {
     outline: none;
 }
 
@@ -56,33 +56,33 @@
     width: 100px;
 } */
 
-.application_table{
+.application_table {
     margin-top: 30px;
 }
 
-.application_table thead tr th{
+.application_table thead tr th {
     text-transform: uppercase;
     padding: 10px 5px;
     font-size: 13px;
     font-weight: 600;
 }
 
-.application_table tbody tr td{
+.application_table tbody tr td {
     padding: 10px 5px;
     font-size: 13px;
     color: #313131;
 }
 
-.application_table tbody tr td svg{
+.application_table tbody tr td svg {
     font-size: 21px;
     cursor: pointer;
 }
 
-.application_table tbody tr:nth-child(even) td{
+.application_table tbody tr:nth-child(even) td {
     background-color: #F5F9FC;
 }
 
-.application_table tbody tr td .ok_td{
+.application_table tbody tr td .ok_td {
     color: #299205;
     background-color: #E6FFDD;
     font-weight: 600;
@@ -90,7 +90,7 @@
     border-radius: 100px;
 }
 
-.application_table tbody td .rejected_td{
+.application_table tbody td .rejected_td {
     color: #FF0000;
     background-color: #FFE5E5;
     font-weight: 600;
@@ -98,7 +98,7 @@
     border-radius: 100px;
 }
 
-.application_table tbody td .processing_td{
+.application_table tbody td .processing_td {
     font-weight: 600;
     padding: 5px 18px;
     border-radius: 100px;
@@ -106,33 +106,34 @@
     background-color: #FFF6D6;
 }
 
-.application_table thead tr{
+.application_table thead tr {
     vertical-align: middle;
 }
 
-.application_table tbody tr{
+.application_table tbody tr {
     vertical-align: middle;
 }
 
-.pagination{
+.pagination {
     display: flex;
     justify-content: end;
     padding: 10px 30px;
     gap: 12px;
 }
 
-.pagination .previous.disabled a, .pagination .next.disabled a{
+.pagination .previous.disabled a,
+.pagination .next.disabled a {
     color: lightgrey;
     text-decoration: none;
 }
 
-.pagination .previous a{
+.pagination .previous a {
     color: #739B21;
     text-decoration: none;
     font-weight: 500;
 }
 
-.pagination .next a{
+.pagination .next a {
     color: #739B21;
     text-decoration: none;
     font-weight: 500;
@@ -144,4 +145,30 @@
     border-radius: 100px;
     font-weight: 600;
     color: #739B21;
+}
+
+/* .table_dots{
+    position: relative;
+} */
+
+.table_dots div {
+    position: absolute;
+    background-color: #fff;
+    right: 10px;
+    border: 1px solid lightgrey;
+    width: 95px;
+}
+
+.table_dots div ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.table_dots div ul li {
+    padding: 7px 15px;
+}
+
+.table_dots div ul li:first-child {
+    border-bottom: 1px solid lightgray;
 }

@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { errorNotify, successNotify } from '../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthLogin } from '../../Redux/Action/auth';
+import mainLogo from "../../images/cdc_logo.png"
 
 const Login = () => {
     const navigate = useNavigate();
@@ -58,7 +59,7 @@ const Login = () => {
                 <Row className='align-items-center justify-content-center'>
                     <Col md={7}>
                         <div className='left_form'>
-                            <img src='/images/cdc_logo.png' alt='' />
+                            <img src={mainLogo} alt='' />
                             <h1><span>Welcome To</span> <br />
                                 Capital Development Authority <br /> <span>Islamabad</span>
                             </h1>
@@ -79,7 +80,7 @@ const Login = () => {
                                     <Form.Control type="password" placeholder="Enter Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                                 </Form.Group>
                                 {/* <p>Forgot Password?</p> */}
-                                <Button variant="primary" type="submit">
+                                <Button variant="primary" type="submit" disabled={loading}>
                                     {loading ? <Spinner animation='border' size='sm' /> : 'LOGIN'}
                                 </Button>
                             </Form>
