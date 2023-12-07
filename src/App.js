@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import NotFound from './Container/Pages/NotFound/NotFound';
 import Register from './Container/Auth/Register';
 
+
 const App = () => {
   return (
     <BrowserRouter>
