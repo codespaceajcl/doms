@@ -12,7 +12,7 @@ import Register from './Container/Auth/Register';
 const App = () => {
   return (
     // basename="/doms/system"
-    <HashRouter basename="/doms">
+    <BrowserRouter basename="/doms">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -35,7 +35,7 @@ const App = () => {
         <Route path="/admin/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 export default App
