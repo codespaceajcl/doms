@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Login from './Container/Auth/Login';
 import UserLayout from './Layout/UserLayout';
 import Form from './Container/Pages/Form/Form';
@@ -9,10 +9,9 @@ import { ToastContainer } from "react-toastify";
 import NotFound from './Container/Pages/NotFound/NotFound';
 import Register from './Container/Auth/Register';
 
-
 const App = () => {
   return (
-    <BrowserRouter basename="/doms">
+    <HashRouter basename="/doms/system">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -35,7 +34,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 export default App
