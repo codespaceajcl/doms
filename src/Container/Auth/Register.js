@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { errorNotify, successNotify } from '../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthRegister } from '../../Redux/Action/auth';
-import cdaLogo from "../../images/cdc_logo.png";
+import cdaLogo from "../../images/cda_white_logo.png";
 import './Auth.css';
 
 const Register = () => {
@@ -17,6 +17,7 @@ const Register = () => {
     const [contact, setContact] = useState('')
     const [cnic, setCnic] = useState('')
     const [address, setAddress] = useState('')
+    const [secretKey, setSecretKey] = useState('')
     const userFound = JSON.parse(localStorage.getItem("user"))
 
     const { loading, getRegisterData, error } = useSelector((state) => state.registerData)
@@ -27,8 +28,14 @@ const Register = () => {
         }
     }, [])
 
+    console.log(getRegisterData)
+
     useEffect(() => {
-        if (getRegisterData) {
+        if (getRegisterData?.response === 'Email Already Exist') {
+            errorNotify(getRegisterData?.response)
+            dispatch({ type: "REGISTER_RESET" })
+        }
+        else if (getRegisterData?.response && getRegisterData?.response !== 'Email Already Exist') {
             successNotify("Register Successfully!")
             dispatch({ type: "REGISTER_RESET" })
             navigate('/')
@@ -39,25 +46,13 @@ const Register = () => {
         }
     }, [getRegisterData])
 
-    const generateRandomKey = (length) => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let randomKey = '';
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            randomKey += characters.charAt(randomIndex);
-        }
-        return randomKey;
-    };
-
     const loginHandler = (e) => {
         e.preventDefault();
         if (name.length === 0 || email.length === 0 || password.length === 0 || designation.length === 0
-            || contact.length === 0 || cnic.length === 0 || address.length === 0) {
+            || contact.length === 0 || cnic.length === 0 || address.length === 0 || secretKey.length === 0) {
             errorNotify('fill out both fields')
             return
         }
-
-        const secretKey = generateRandomKey(32);
 
         const formData = new FormData();
         formData.append("name", name)
@@ -128,10 +123,16 @@ const Register = () => {
                                             <Form.Control type="text" placeholder="Enter CNIC" value={cnic} onChange={(e) => setCnic(e.target.value)} />
                                         </Form.Group>
                                     </Col>
-                                    <Col md={12}>
+                                    <Col md={6}>
                                         <Form.Group className="mb-3" controlId="formBasicPassword">
                                             <Form.Label>Address</Form.Label>
                                             <Form.Control type="text" placeholder="Enter Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Label>Secret Key</Form.Label>
+                                            <Form.Control type="password" placeholder="Enter Secret Key" value={secretKey} onChange={(e) => setSecretKey(e.target.value)} />
                                         </Form.Group>
                                     </Col>
                                 </Row>

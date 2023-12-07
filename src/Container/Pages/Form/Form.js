@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { errorNotify, successNotify } from '../../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormCreate, FormSave } from '../../../Redux/Action/Dashboard';
+import Select from "react-select"
 import { pdfjs } from 'react-pdf';
 import { Document, Page } from 'react-pdf';
 import { FaChevronRight } from "react-icons/fa";
@@ -13,6 +14,8 @@ import { FaChevronLeft } from "react-icons/fa";
 import Loader from '../../../Utils/Loader';
 import Announcement from '../../../Components/Announcement/Announcement';
 import defaultImg from "../../../images/default_image.png";
+import { dashboardColorStyles } from '../../../Utils/Helper';
+import printJS from 'print-js'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -27,39 +30,72 @@ const RegistrationForm = () => {
   const [tab, setTab] = useState('registration');
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
+  const [printLink, setPrintLink] = useState('')
+  const [printLoader, setPrintLoader] = useState(false)
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
   }
 
   const { loading, formCreateData } = useSelector((state) => state.postForm)
-  const { loading: saveLoading, formSaveData } = useSelector((state) => state.saveForm)
-
-  useEffect(() => {
-    if (previewPdf.length > 0) {
-      setTab('preview')
-      dispatch({ type: "FORM_POST_RESET" })
-    }
-  }, [previewPdf])
+  const { loading: saveLoading, formSaveData, error } = useSelector((state) => state.saveForm)
 
   useEffect(() => {
     if (formCreateData?.response === 'success') {
       setPreviewPdf(formCreateData?.link)
-
+      dispatch({ type: "FORM_POST_RESET" })
     }
     else if (formCreateData?.response === 'error') {
       errorNotify(formCreateData?.message)
+      setTab("registration")
       dispatch({ type: "FORM_POST_RESET" })
     }
   }, [formCreateData])
 
   useEffect(() => {
+    setTimeout(() => {
+      setPrintLoader(false)
+    }, 2000)
+  }, [printLoader])
+
+  useEffect(() => {
     if (formSaveData?.response === 'success') {
       setTab('submit')
+      setPrintLink(formSaveData?.link)
       dispatch({ type: "FORM_SAVE_RESET" })
       successNotify("Application Added Successfully!")
     }
   }, [formSaveData])
+
+  const options = [
+    { value: "Pakistan", label: "Pakistan" }
+  ]
+
+  const stateOptions = [
+    { value: "Sindh", label: "Sindh" },
+    { value: "Punjab", label: "Punjab" },
+    { value: "Khyber_Pakhtunkhwa", label: "Khyber Pakhtunkhwa" },
+    { value: "Balochistan", label: "Balochistan" },
+  ]
+
+  const cities = [
+    {
+      state: "Sindh",
+      city: [{ value: "Karachi", label: "Karachi" }, { value: "Hyderabad", label: "Hyderabad" }, { value: "Jamshoro", label: "Jamshoro" }, { value: "Tatta", label: "Tatta" }, { value: "Larkana", label: "Larkana" }, { value: "Ghotki", label: "Ghotki" }, { value: "Nawab Shah", label: "Nawab Shah" }]
+    },
+    {
+      state: "Punjab",
+      city: [{ value: "Islamabad", label: "Islamabad" }, { value: "Lahore", label: "Lahore" }, { value: "Sahiwal", label: "Sahiwal" }, { value: "Faisalabad", label: "Faisalabad" }, { value: "Sialkot", label: "Sialkot" }, { value: "Jhelum", label: "Jhelum" }, { value: "Sargodha", label: "Sargodha" }]
+    },
+    {
+      state: "Khyber_Pakhtunkhwa",
+      city: [{ value: "Peshawar", label: "Peshawar" }, { value: "Nowshera", label: "Nowshera" }, { value: "Abbottabad", label: "Abbottabad" }, { value: "Chitral", label: "Chitral" }, { value: "Chārsadda", label: "Chārsadda" }]
+    },
+    {
+      state: "Khyber_Pakhtunkhwa",
+      city: [{ value: "Quetta", label: "Quetta" }, { value: "Gwadar", label: "Gwadar" }, { value: "Turbat", label: "Turbat" }, { value: "Khuzdar", label: "Khuzdar" }, { value: "Noshki", label: "Noshki" }, { value: "Chaman", label: "Chaman" }]
+    },
+  ]
 
   const [formField, setFormField] = useState({
     referenceNo: "",
@@ -68,9 +104,6 @@ const RegistrationForm = () => {
     fullName: "",
     fatherName: "",
     address: "",
-    city: "",
-    state: "",
-    country: "",
     cdaSerialNo: "",
     videOrderDate: "2023-01-01",
     plot: "",
@@ -78,6 +111,18 @@ const RegistrationForm = () => {
     sector: "",
     plotSize: ""
   })
+
+  const [countryOption, setCountryOption] = useState(options[0]);
+  const [stateOption, setStateOption] = useState([]);
+  const [cityOptions, setCityOptions] = useState([]);
+  const [cityOption, setCityOption] = useState([]);
+
+  const handleStateChange = (selectedState) => {
+    setStateOption(selectedState);
+
+    const selectedStateCities = cities.find((item) => item.state === selectedState.value);
+    setCityOptions(selectedStateCities ? selectedStateCities.city : []);
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -111,7 +156,7 @@ const RegistrationForm = () => {
   const previewHandler = () => {
 
     const isAnyFieldEmpty = Object.values(formField).some(value => value === "");
-    if (isAnyFieldEmpty || !profileImage) {
+    if (isAnyFieldEmpty || !profileImage || stateOption.length === 0 || cityOption.length === 0) {
       errorNotify("Please Filled up all fields");
       return;
     }
@@ -124,15 +169,19 @@ const RegistrationForm = () => {
       }
     }
     registerData.append("profile", profileImage)
+    registerData.append("country", countryOption.value)
+    registerData.append("state", stateOption.value)
+    registerData.append("city", cityOption.value)
     registerData.append("token", currentUser.token)
     registerData.append("email", currentUser.email)
 
+    setTab('preview')
     dispatch(FormCreate(registerData))
   }
 
   const saveFormHandler = () => {
     const isAnyFieldEmpty = Object.values(formField).some(value => value === "");
-    if (isAnyFieldEmpty || !profileImage) {
+    if (isAnyFieldEmpty || !profileImage || stateOption.length === 0 || cityOption.length === 0) {
       errorNotify("Please Filled up all fields");
       return;
     }
@@ -145,6 +194,9 @@ const RegistrationForm = () => {
       }
     }
     registerData.append("profile", profileImage)
+    registerData.append("country", countryOption.value)
+    registerData.append("state", stateOption.value)
+    registerData.append("city", cityOption.value)
     registerData.append("token", currentUser.token)
     registerData.append("email", currentUser.email)
 
@@ -162,6 +214,11 @@ const RegistrationForm = () => {
     if (pageNumber !== numPages) {
       setPageNumber(pageNumber + 1)
     }
+  }
+
+  const printHandler = () => {
+    setPrintLoader(true)
+    printJS(printLink)
   }
 
   return (
@@ -195,23 +252,7 @@ const RegistrationForm = () => {
             <div className='heading'>
               <h5>REGISTRATION</h5>
 
-              <div>
-                <button>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="24" viewBox="0 0 24 24" fill="none">
-                    <mask id="mask0_328_2934" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                      <rect width="24" height="24" fill="#D9D9D9" />
-                    </mask>
-                    <g mask="url(#mask0_328_2934)">
-                      <path d="M4 20C3.45 20 2.97917 19.8042 2.5875 19.4125C2.19583 19.0208 2 18.55 2 18V6C2 5.45 2.19583 4.97917 2.5875 4.5875C2.97917 4.19583 3.45 4 4 4H20C20.55 4 21.0208 4.19583 21.4125 4.5875C21.8042 4.97917 22 5.45 22 6V18C22 18.55 21.8042 19.0208 21.4125 19.4125C21.0208 19.8042 20.55 20 20 20H4ZM4 18H11V6H4V18ZM13 18H20V6H13V18ZM5 16H10V14H5V16ZM5 13H10V11H5V13ZM5 10H10V8H5V10ZM14 16H19V14H14V16ZM14 13H19V11H14V13ZM14 10H19V8H14V10Z" fill="url(#paint0_linear_328_2934)" />
-                    </g>
-                    <defs>
-                      <linearGradient id="paint0_linear_328_2934" x1="12" y1="4" x2="12" y2="20" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#739B21" />
-                        <stop offset="1" stop-color="#739B21" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  Read Instruction</button>
+              {/* <div>
                 <button>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="24" viewBox="0 0 24 24" fill="none">
                     <mask id="mask0_328_2926" style={{ maskType: "alpha" }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
@@ -238,7 +279,7 @@ const RegistrationForm = () => {
                     </g>
                   </svg>
                   Import</button>
-              </div>
+              </div> */}
             </div>
 
             <div className='content'>
@@ -270,7 +311,7 @@ const RegistrationForm = () => {
                     <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>Serial No</Form.Label>
-                        <Form.Control type="text" placeholder="Enter Serial No" value={formField.serialNo} name='serialNo' onChange={formFieldHandler} />
+                        <Form.Control type="number" minLength={0} placeholder="Enter Serial No" value={formField.serialNo} name='serialNo' onChange={formFieldHandler} />
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -331,23 +372,31 @@ const RegistrationForm = () => {
                 </Col>
                 <Col md={4}>
                   <Form.Group className="mb-3">
-                    <Form.Label>City</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Your City"
-                      name="city" value={formField.city} onChange={formFieldHandler} />
+                    <Form.Label>Country</Form.Label>
+                    <Select options={options} value={countryOption} onChange={(country) => setCountryOption(country)} placeholder="Select Country" styles={dashboardColorStyles} isDisabled />
+                    {/* <Form.Control type="text" placeholder="Enter Your Country"
+                      name="country" value={formField.country} onChange={formFieldHandler} /> */}
                   </Form.Group>
                 </Col>
                 <Col md={4}>
                   <Form.Group className="mb-3">
                     <Form.Label>State/Province</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Your State/Province"
-                      name="state" value={formField.state} onChange={formFieldHandler} />
+                    <Select options={stateOptions} value={stateOption}
+                      onChange={handleStateChange} placeholder="Select State"
+                      styles={dashboardColorStyles} />
+                    {/* <Form.Control type="text" placeholder="Enter Your State/Province"
+                      name="state" value={formField.state} onChange={formFieldHandler} /> */}
                   </Form.Group>
                 </Col>
                 <Col md={4}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Country</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Your Country"
-                      name="country" value={formField.country} onChange={formFieldHandler} />
+                    <Form.Label>City</Form.Label>
+                    <Select placeholder="Select City" options={cityOptions} value={cityOption}
+                      onChange={(state) => setCityOption(state)}
+                      styles={dashboardColorStyles} />
+
+                    {/* <Form.Control type="text" placeholder="Enter Your City"
+                      name="city" value={formField.city} onChange={formFieldHandler} /> */}
                   </Form.Group>
                 </Col>
                 <Col md={4}>
@@ -394,7 +443,7 @@ const RegistrationForm = () => {
                 </Col>
                 <Col md={12}>
                   <div className='next_btn'>
-                    <button onClick={previewHandler} disabled={loading}> {loading ? <Spinner animation='border' size='sm' /> : 'Next'} </button>
+                    <button onClick={previewHandler} disabled={loading}> Next </button>
                     <button>Back</button>
                   </div>
                 </Col>
@@ -404,32 +453,30 @@ const RegistrationForm = () => {
         }
         {
           tab === 'preview' && <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
-            <div className='preview_show_data'>
-              <MdClose onClick={() => setTab('registration')} className='close_icon' />
+            {
+              loading || saveLoading ? <Loader color={"#fff"} /> : previewPdf?.length > 0 ?
+                <div className='preview_show_data'>
+                  <MdClose onClick={() => setTab('registration')} className='close_icon' />
 
-              <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
-                <Page pageNumber={pageNumber} />
-              </Document>
+                  <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
+                    <Page pageNumber={pageNumber} />
+                  </Document>
 
-              <div className='pdf_chevron'>
-                <FaChevronLeft onClick={pageDecrease} />
-                <FaChevronRight onClick={pageIncrease} />
-              </div>
+                  <div className='pdf_chevron'>
+                    <FaChevronLeft onClick={pageDecrease} />
+                    <FaChevronRight onClick={pageIncrease} />
+                  </div>
 
-              <div className='preview_btn mt-2'>
-                <button onClick={saveFormHandler} disabled={saveLoading}> {saveLoading ? <Spinner animation='border' size='sm' /> : "Save"} </button>
-                <button className='discard' onClick={() => setTab('registration')}>Discard</button>
-              </div>
-            </div>
+                  <div className='preview_btn mt-2'>
+                    <button onClick={saveFormHandler} disabled={saveLoading}> {saveLoading ? <Spinner animation='border' size='sm' /> : "Save"} </button>
+                    <button className='discard' onClick={() => setTab('registration')}>Discard</button>
+                  </div>
+                </div> : null
+            }
           </div>
         }
         {
           tab === 'submit' && <div className='registration_form'>
-
-            <div className='heading'>
-              <h5>REGISTRATION</h5>
-            </div>
-
             <div style={{ padding: "20px" }}>
               <div className='success_msg'>
                 <h3>SUCCESS</h3>
@@ -442,6 +489,7 @@ const RegistrationForm = () => {
                   </g>
                 </svg>
                 <h5>Your Form has been submitted <br /> Successfully!</h5>
+                <button className='print_doc' type="button" onClick={printHandler}> {printLoader ? <Spinner animation='border' size='sm' /> : "PRINT ORIGINAL DOCUMENT"}</button>
               </div>
 
               <div className='success_btn'>

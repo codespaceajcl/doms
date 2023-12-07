@@ -3,7 +3,7 @@ import { Col, Row, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Announcement from '../../Components/Announcement/Announcement'
 import { getCurrentUser } from '../../Utils/Helper';
-import { applicationGet } from '../../Redux/Action/Dashboard';
+import { applicationGet, dashboardGet } from '../../Redux/Action/Dashboard';
 import Loader from '../../Utils/Loader';
 import {
   Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend,
@@ -39,6 +39,18 @@ const Dashboard = () => {
   const [pageNumber, setPageNumber] = useState(1);
 
   const { loading, tableGetData } = useSelector((state) => state.getTable)
+  const { loading: dashLoading, dashGetData } = useSelector((state) => state.getDashboard)
+
+  console.log(dashGetData)
+
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    const formData = new FormData();
+    formData.append("token", currentUser?.token)
+    formData.append("email", currentUser?.email)
+
+    dispatch(dashboardGet(formData))
+  }, [])
 
   useEffect(() => {
 
@@ -63,8 +75,8 @@ const Dashboard = () => {
     setGetTableData(filteredData)
   }
 
-  const previewHandler = () => {
-    setPreviewPdf('https://crms.ajcl.net/doms/directorateOfLandAndRehabilitationPreviews/yj1Nmd00XLVPHmsi.pdf')
+  const previewHandler = (getDoc) => {
+    setPreviewPdf(getDoc)
     setShowPdf(true)
   }
 
@@ -173,25 +185,25 @@ const Dashboard = () => {
           <Col md={3}>
             <div className='dashboard_boxes'>
               <h6>Total <br /> Applications</h6>
-              <h5>1400</h5>
+              <h5>{loading ? 0 : dashGetData?.data?.totalApplications}</h5>
             </div>
           </Col>
           <Col md={3}>
             <div className='dashboard_boxes'>
               <h6>Applicants This <br /> Month</h6>
-              <h5>400</h5>
+              <h5>{loading ? 0 : dashGetData?.data?.applicationsThisMonth}</h5>
             </div>
           </Col>
           <Col md={3}>
             <div className='dashboard_boxes'>
               <h6>Total Registered <br /> Users</h6>
-              <h5>156</h5>
+              <h5>{loading ? 0 : dashGetData?.data?.totalRegisteredUsers}</h5>
             </div>
           </Col>
           <Col md={3}>
             <div className='dashboard_boxes'>
               <h6>Active Users This <br /> Month</h6>
-              <h5>239</h5>
+              <h5>{loading ? 0 : dashGetData?.data?.activeUsersThisMonth}</h5>
             </div>
           </Col>
         </Row>
@@ -232,8 +244,8 @@ const Dashboard = () => {
                               <td>{t?.fullName}</td>
                               <td className='text-center'>{t?.serialNo}</td>
                               <td className='text-center'>
-                                <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={previewHandler} /></span>
-                                <span> <a style={{ textDecoration: "none" }} href='https://crms.ajcl.net/doms/directorateOfLandAndRehabilitationPreviews/yj1Nmd00XLVPHmsi.pdf' target='_blank'>
+                                <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
+                                <span> <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
                                   <MdOutlineFileDownload /> </a> </span>
                               </td>
 
@@ -248,7 +260,7 @@ const Dashboard = () => {
           </Col>
           <Col md={6}>
             <div className='dashboard_chart'>
-              <div>
+              <div style={{ padding: "15px" }}>
                 <h6>Applications Zones Wise (Islamabad)</h6>
 
                 <div className='zone_wise'>
@@ -268,12 +280,16 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div>
+              <div style={{ padding: "15px" }}>
                 <h6>Applicantions by Area  Union District (Islamabad)</h6>
 
                 <div className='line_chart'>
                   <Bar options={warehouseOptions} data={warehouseData} />
                 </div>
+              </div>
+
+              <div className='overlay_coming_soon'>
+                <h2>COMMING SOON</h2>
               </div>
             </div>
           </Col>

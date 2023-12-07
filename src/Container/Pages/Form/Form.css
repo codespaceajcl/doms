@@ -162,6 +162,16 @@
     color: #787878;
 }
 
+.registration_form .content .form-control::-webkit-outer-spin-button,
+.registration_form .content .form-control::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.registration_form .content .form-control[type=number] {
+  -moz-appearance: textfield;
+}
+
 .registration_form .content .form-control:focus{
     box-shadow: none;
     border: 1px solid #739B21;
@@ -364,6 +374,18 @@
     position: absolute;
     top: 40%;
     right: -6%;
+}
+
+.print_doc{
+    margin-top: 20px;
+    background-color: #739B21;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 250px;
 }
 
 @media (max-width: 1050px) {

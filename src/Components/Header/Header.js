@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap"
+import React, { useRef, useState } from 'react';
+import { Container, Modal, Nav, Navbar, NavDropdown } from "react-bootstrap"
 import { Link, useNavigate } from 'react-router-dom';
 import { successNotify } from '../../Utils/Toast';
 import MobileSidebar from './MobileSidebar';
 import { dashboardSidebar } from '../../Container/Dashboard/Routes/Routes';
-import mainLogo from "../../images/main_logo.jpg";
+import mainLogo from "../../images/cda_logo.png";
 import userAvatar from "../../images/user_avatar.png";
 import './Header.css';
 
@@ -12,6 +12,7 @@ const Header = () => {
     const currentUser = JSON.parse(localStorage.getItem("user"))
     const navigate = useNavigate();
     const navbarRef = useRef();
+    const [show, setShow] = useState(false)
 
     const logoutHandler = () => {
         localStorage.clear();
@@ -25,8 +26,19 @@ const Header = () => {
         else navbarRef.current.style.width = "100%";
     };
 
+    const modal = <Modal show={show} centered className='logout_modal'>
+        <Modal.Body>
+            <h3>Are you sure you want to logout?</h3>
+            <div className='d-flex justify-content-center' style={{ gap: "20px" }}>
+                <button onClick={logoutHandler}>Yes</button>
+                <button className='no_btn' onClick={() => setShow(false)}>No</button>
+            </div>
+        </Modal.Body>
+    </Modal>
+
     return (
         <div>
+            {modal}
             <MobileSidebar
                 navbarRef={navbarRef}
                 NavHandler={NavHandler}

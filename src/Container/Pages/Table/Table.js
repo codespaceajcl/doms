@@ -36,7 +36,10 @@ const TableView = () => {
     setNumPages(numPages);
   }
 
-  const { loading, tableGetData } = useSelector((state) => state.getTable)
+  const { loading, tableGetData, error } = useSelector((state) => state.getTable)
+
+  console.log(error)
+  console.log(tableGetData)
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -60,8 +63,8 @@ const TableView = () => {
     setGetTableData(filteredData)
   }
 
-  const previewHandler = () => {
-    setPreviewPdf('https://crms.ajcl.net/doms/directorateOfLandAndRehabilitationPreviews/yj1Nmd00XLVPHmsi.pdf')
+  const previewHandler = (getDoc) => {
+    setPreviewPdf(getDoc)
     setShowPdf(true)
   }
 
@@ -82,8 +85,8 @@ const TableView = () => {
         <td>{moment(t?.date).format('L')} </td>
         <td className='text-center'>{moment(t?.videOrderDate).format('L')}</td>
         <td className='text-center'>
-          <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={previewHandler} /></span>
-          <span> <a style={{ textDecoration: "none" }} href='https://crms.ajcl.net/doms/directorateOfLandAndRehabilitationPreviews/yj1Nmd00XLVPHmsi.pdf' target='_blank'>
+          <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
+          <span> <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
             <MdOutlineFileDownload /> </a> </span>
         </td>
         <td><span className='table_dots' onClick={() => handleShowCrudToggle(i)}> <HiOutlineDotsVertical />

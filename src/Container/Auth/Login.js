@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { errorNotify, successNotify } from '../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthLogin } from '../../Redux/Action/auth';
-import mainLogo from "../../images/cdc_logo.png"
+import mainLogo from "../../images/cda_white_logo.png"
 import './Auth.css'
 
 const Login = () => {
@@ -83,7 +83,7 @@ const Login = () => {
                                 </Button>
                             </Form>
 
-                            <h6>Don't have an account? <a onClick={() => navigate('/register')}> Register </a></h6>
+                            {/* <h6>Don't have an account? <a onClick={() => navigate('/register')}> Register </a></h6> */}
 
                             <h6>Need guidance? <a href='https://www.cda.gov.pk/eservices/askcda.asp' target='_blank'>
                                 ask CDA</a></h6>

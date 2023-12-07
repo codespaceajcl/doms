@@ -70,3 +70,27 @@ export const applicationGet = (formData) => async (dispatch) => {
         });
     }
 };
+
+export const dashboardGet = (formData) => async (dispatch) => {
+    try {
+        dispatch({
+            type: "DASHBOARD_GET_REQUEST",
+        });
+
+        const { data } = await axios.post("doms/getSummary/", formData);
+
+        dispatch({
+            type: "DASHBOARD_GET_SUCCESS",
+            payload: data,
+            success: true,
+        });
+
+    } catch (e) {
+        dispatch({
+            type: "DASHBOARD_GET_FAILED",
+            payload: e?.response?.data?.message,
+            success: false,
+        });
+    }
+};
+

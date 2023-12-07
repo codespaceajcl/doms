@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, BrowserRouter } from "react-router-dom";
 import Login from './Container/Auth/Login';
 import UserLayout from './Layout/UserLayout';
 import Form from './Container/Pages/Form/Form';
@@ -11,7 +11,8 @@ import Register from './Container/Auth/Register';
 
 const App = () => {
   return (
-    <HashRouter basename="/doms/system">
+    // basename="/doms/system"
+    <HashRouter basename="/doms">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -31,7 +32,7 @@ const App = () => {
         </Route>
 
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/admin/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </HashRouter>

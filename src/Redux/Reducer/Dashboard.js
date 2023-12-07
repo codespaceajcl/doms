@@ -81,3 +81,27 @@ export const applicationGetReducer = (state = {}, action) => {
             return state;
     }
 }
+
+export const dashboardGetReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "DASHBOARD_GET_REQUEST":
+            return {
+                ...state,
+                loading: true,
+            };
+        case "DASHBOARD_GET_SUCCESS":
+            return {
+                ...state,
+                loading: false,
+                dashGetData: action.payload,
+            };
+        case "DASHBOARD_GET_FAILED":
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+        default:
+            return state;
+    }
+}
