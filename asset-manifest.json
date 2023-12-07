@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/doms/system/static/css/main.f719244a.css",
-    "main.js": "/doms/system/static/js/main.588fadab.js",
-    "static/media/login_bg.jpg": "/doms/system/static/media/login_bg.e844a2e067df326eee0c.jpg",
-    "static/media/cdc_logo.png": "/doms/system/static/media/cdc_logo.d6701bd470d4c8c82f55.png",
-    "static/media/main_logo.jpg": "/doms/system/static/media/main_logo.8f36ce3950e1c7df2e11.jpg",
-    "static/media/user_avatar.png": "/doms/system/static/media/user_avatar.a6143582309785dca610.png",
-    "static/media/notfound.png": "/doms/system/static/media/notfound.6c96b2283321ec945ef5.png",
-    "index.html": "/doms/system/index.html",
-    "main.f719244a.css.map": "/doms/system/static/css/main.f719244a.css.map",
-    "main.588fadab.js.map": "/doms/system/static/js/main.588fadab.js.map"
+    "main.css": "/doms/static/css/main.5b8a40b6.css",
+    "main.js": "/doms/static/js/main.c91f11c1.js",
+    "static/media/login_bg.jpg": "/doms/static/media/login_bg.e844a2e067df326eee0c.jpg",
+    "static/media/cdc_logo.png": "/doms/static/media/cdc_logo.d6701bd470d4c8c82f55.png",
+    "static/media/main_logo.jpg": "/doms/static/media/main_logo.8f36ce3950e1c7df2e11.jpg",
+    "static/media/user_avatar.png": "/doms/static/media/user_avatar.a6143582309785dca610.png",
+    "static/media/notfound.png": "/doms/static/media/notfound.6c96b2283321ec945ef5.png",
+    "index.html": "/doms/index.html",
+    "main.5b8a40b6.css.map": "/doms/static/css/main.5b8a40b6.css.map",
+    "main.c91f11c1.js.map": "/doms/static/js/main.c91f11c1.js.map"
   },
   "entrypoints": [
-    "static/css/main.f719244a.css",
-    "static/js/main.588fadab.js"
+    "static/css/main.5b8a40b6.css",
+    "static/js/main.c91f11c1.js"
   ]
 }
