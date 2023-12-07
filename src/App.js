@@ -25,7 +25,6 @@ const App = () => {
         pauseOnHover
         theme="light" />
       <Routes>
-
         <Route path={"/dashboard"} element={<UserLayout />}>
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/dashboard/registration' element={<Form />} />
