@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Auth.css'
-import { Col, Container, Row, Spinner } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import { Col, Container, Row, Spinner, Button, Form } from 'react-bootstrap';
 import { TbWorld } from "react-icons/tb";
 import { MdEmail } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +7,7 @@ import { errorNotify, successNotify } from '../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthLogin } from '../../Redux/Action/auth';
 import mainLogo from "../../images/cdc_logo.png"
+import './Auth.css'
 
 const Login = () => {
     const navigate = useNavigate();

@@ -8,8 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormCreate, FormSave } from '../../../Redux/Action/Dashboard';
 import { pdfjs } from 'react-pdf';
 import { Document, Page } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 import { FaChevronRight } from "react-icons/fa";
 import { FaChevronLeft } from "react-icons/fa";
 import Loader from '../../../Utils/Loader';

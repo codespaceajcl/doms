@@ -54,5 +54,4 @@ function MobileSidebar({ navbarRef, NavHandler, sideBarItems }) {
         </div>
     );
 }
-
 export default MobileSidebar;

@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import './Auth.css'
-import { Col, Container, Row, Spinner } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { TbWorld } from "react-icons/tb";
-import { MdEmail } from "react-icons/md";
+import { Col, Container, Row, Spinner, Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { errorNotify, successNotify } from '../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthRegister } from '../../Redux/Action/auth';
 import cdaLogo from "../../images/cdc_logo.png";
+import './Auth.css';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -139,21 +135,12 @@ const Register = () => {
                                         </Form.Group>
                                     </Col>
                                 </Row>
-
                                 <Button variant="primary" type="submit" disabled={loading}>
                                     {loading ? <Spinner animation='border' size='sm' /> : 'Register'}
                                 </Button>
                             </Form>
 
                             <h6>Already have an account? <a onClick={() => navigate('/')}> Login </a></h6>
-
-                            {/* <h6>Need guidance? <a href='https://www.cda.gov.pk/eservices/askcda.asp' target='_blank'>
-                                ask CDA</a></h6>
-
-                            <div className='social_icons'>
-                                <a href='https://www.cda.gov.pk/' target='_blank'> <TbWorld /> </a>
-                                <a href='mailto:getreply@cda.gov.pk'><MdEmail /></a>
-                            </div> */}
                         </div>
                     </Col>
                 </Row>

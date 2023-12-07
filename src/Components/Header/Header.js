@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap"
 import { Link, useNavigate } from 'react-router-dom';
-import './Header.css';
 import { successNotify } from '../../Utils/Toast';
 import MobileSidebar from './MobileSidebar';
 import { dashboardSidebar } from '../../Container/Dashboard/Routes/Routes';
 import mainLogo from "../../images/main_logo.jpg";
 import userAvatar from "../../images/user_avatar.png";
+import './Header.css';
 
 const Header = () => {
     const currentUser = JSON.parse(localStorage.getItem("user"))
@@ -37,7 +37,6 @@ const Header = () => {
                     <Navbar.Brand>
                         <div>
                             <img src={mainLogo} alt='' />
-
                             <div>
                                 <p>Government Of Pakistan</p>
                                 <h6>Capital Development Authority</h6>
@@ -54,7 +53,6 @@ const Header = () => {
                                     <p>Greetings,</p>
                                     <h6>{currentUser?.name}</h6>
                                 </div>
-
                                 <div className='user_img'>
                                     <img src={userAvatar} alt='' />
                                     <NavDropdown title="" id="basic-nav-dropdown">
@@ -71,5 +69,4 @@ const Header = () => {
         </div>
     )
 }
-
-export default Header
+export default Header;

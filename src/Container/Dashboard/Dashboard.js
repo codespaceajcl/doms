@@ -1,25 +1,18 @@
-import React from 'react'
-import Announcement from '../../Components/Announcement/Announcement'
+import React, { useEffect, useState } from 'react'
 import { Col, Row, Table } from 'react-bootstrap';
-import { MdOutlineRemoveRedEye, MdOutlineFileDownload } from "react-icons/md";
-import './Dashboard.css';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Announcement from '../../Components/Announcement/Announcement'
 import { getCurrentUser } from '../../Utils/Helper';
 import { applicationGet } from '../../Redux/Action/Dashboard';
-import { useState } from 'react';
 import Loader from '../../Utils/Loader';
 import {
   Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend,
 } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
-import { pdfjs } from 'react-pdf';
-import { MdClose } from "react-icons/md";
-import { Document, Page } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
-import { FaChevronRight } from "react-icons/fa";
-import { FaChevronLeft } from "react-icons/fa";
+import { Document, Page, pdfjs } from 'react-pdf';
+import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdClose } from "react-icons/md";
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
+import './Dashboard.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -176,7 +169,7 @@ const Dashboard = () => {
       <Announcement />
 
       <div className='dashboard_main'>
-        <Row style={{padding: "0 15px"}}>
+        <Row style={{ padding: "0 15px" }}>
           <Col md={3}>
             <div className='dashboard_boxes'>
               <h6>Total <br /> Applications</h6>
@@ -203,7 +196,7 @@ const Dashboard = () => {
           </Col>
         </Row>
 
-        <Row style={{padding: "0 15px"}}>
+        <Row style={{ padding: "0 15px" }}>
           <Col md={6}>
             <div className='application_table recent_table'>
               <div className='heading'>

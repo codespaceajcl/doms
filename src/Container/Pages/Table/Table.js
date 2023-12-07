@@ -39,7 +39,6 @@ const TableView = () => {
   const { loading, tableGetData } = useSelector((state) => state.getTable)
 
   useEffect(() => {
-
     const currentUser = getCurrentUser();
     const formData = new FormData();
     formData.append("token", currentUser?.token)

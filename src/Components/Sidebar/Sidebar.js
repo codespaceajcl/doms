@@ -1,8 +1,8 @@
 import React from 'react';
-import { dashboardSidebar } from '../../Container/Dashboard/Routes/Routes';
-import './Sidebar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { dashboardSidebar } from '../../Container/Dashboard/Routes/Routes';
 import { successNotify } from '../../Utils/Toast';
+import './Sidebar.css';
 
 const Sidebar = () => {
     const { pathname } = useLocation();
