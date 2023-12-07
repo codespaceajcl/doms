@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/static/css/main.9633c80d.css",
+    "main.js": "/static/js/main.fc305f19.js",
+    "static/media/login_bg.jpg": "/static/media/login_bg.e844a2e067df326eee0c.jpg",
+    "static/media/cdc_logo.png": "/static/media/cdc_logo.d6701bd470d4c8c82f55.png",
+    "static/media/main_logo.jpg": "/static/media/main_logo.8f36ce3950e1c7df2e11.jpg",
+    "static/media/user_avatar.png": "/static/media/user_avatar.a6143582309785dca610.png",
+    "static/media/notfound.png": "/static/media/notfound.6c96b2283321ec945ef5.png",
+    "index.html": "/index.html",
+    "main.9633c80d.css.map": "/static/css/main.9633c80d.css.map",
+    "main.fc305f19.js.map": "/static/js/main.fc305f19.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9633c80d.css",
+    "static/js/main.fc305f19.js"
+  ]
+}
