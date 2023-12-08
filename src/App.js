@@ -11,7 +11,7 @@ import Register from './Container/Auth/Register';
 
 const App = () => {
   return (
-    // basename="/doms/system"
+    
     <BrowserRouter basename="/doms">
       <ToastContainer
         position="top-center"

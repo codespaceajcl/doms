@@ -17,6 +17,7 @@ img {
   background: #F6F9FC;
   min-height: 100vh;
   gap: 12px;
+  padding-top: 100px;
 }
 
 .dashboard_div .left_dashboard {

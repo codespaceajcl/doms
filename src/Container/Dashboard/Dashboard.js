@@ -289,7 +289,7 @@ const Dashboard = () => {
               </div>
 
               <div className='overlay_coming_soon'>
-                <h2>COMMING SOON</h2>
+                <h2>COMING SOON</h2>
               </div>
             </div>
           </Col>
