@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/doms/static/css/main.5388defc.css",
-    "main.js": "/doms/static/js/main.016eb312.js",
+    "main.js": "/doms/static/js/main.f0b58f90.js",
     "static/media/login_bg.jpg": "/doms/static/media/login_bg.e844a2e067df326eee0c.jpg",
     "static/media/user_avatar.png": "/doms/static/media/user_avatar.2e3128477ecce14831a6.png",
     "static/media/cda_logo.png": "/doms/static/media/cda_logo.d08abe930e5fdb79e698.png",
@@ -9,10 +9,10 @@
     "static/media/cda_white_logo.png": "/doms/static/media/cda_white_logo.f4453a08ac91aef80d96.png",
     "index.html": "/doms/index.html",
     "main.5388defc.css.map": "/doms/static/css/main.5388defc.css.map",
-    "main.016eb312.js.map": "/doms/static/js/main.016eb312.js.map"
+    "main.f0b58f90.js.map": "/doms/static/js/main.f0b58f90.js.map"
   },
   "entrypoints": [
     "static/css/main.5388defc.css",
-    "static/js/main.016eb312.js"
+    "static/js/main.f0b58f90.js"
   ]
 }
