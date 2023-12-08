@@ -32,6 +32,7 @@ const RegistrationForm = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [printLink, setPrintLink] = useState('')
   const [printLoader, setPrintLoader] = useState(false)
+  const [showPrintOnce, setShowPrintOnce] = useState(false);
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -54,9 +55,9 @@ const RegistrationForm = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      setPrintLoader(false)
-    }, 2000)
-  }, [printLoader])
+      setPrintLoader(false);
+    }, 5000);
+  }, [printLoader]);
 
   useEffect(() => {
     if (formSaveData?.response === 'success') {
@@ -219,6 +220,10 @@ const RegistrationForm = () => {
   const printHandler = () => {
     setPrintLoader(true)
     printJS(printLink)
+
+    setTimeout(() => {
+      setShowPrintOnce(true);
+    }, 5000)
   }
 
   return (
@@ -489,7 +494,16 @@ const RegistrationForm = () => {
                   </g>
                 </svg>
                 <h5>Your Form has been submitted <br /> Successfully!</h5>
-                <button className='print_doc' type="button" onClick={printHandler}> {printLoader ? <Spinner animation='border' size='sm' /> : "PRINT ORIGINAL DOCUMENT"}</button>
+                {showPrintOnce === false && (
+                  <button
+                    className='print_doc'
+                    type="button"
+                    onClick={printHandler}
+                    disabled={printLoader}
+                  >
+                    {printLoader ? <Spinner animation='border' size='sm' /> : "PRINT ORIGINAL DOCUMENT"}
+                  </button>
+                )}
               </div>
 
               <div className='success_btn'>

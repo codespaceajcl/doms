@@ -2,6 +2,7 @@ import { GoHome } from "react-icons/go";
 import { MdOutlineGridView } from "react-icons/md";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { RiLogoutCircleRLine } from "react-icons/ri";
+import { MdOutlineShareLocation } from "react-icons/md";
 
 export const dashboardSidebar = [
     {
@@ -21,7 +22,7 @@ export const dashboardSidebar = [
     },
     {
         path: "/dashboard/track-plots",
-        icon: <MdOutlineGridView />,
+        icon: <MdOutlineShareLocation />,
         title: "Track Plots",
     },
     {
