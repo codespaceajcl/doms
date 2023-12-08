@@ -11,8 +11,8 @@ import Register from './Container/Auth/Register';
 
 const App = () => {
   return (
-    
-    <BrowserRouter basename="/doms">
+    // basename="/doms"
+    <BrowserRouter>
       <ToastContainer
         position="top-center"
         autoClose={3000}
