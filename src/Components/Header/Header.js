@@ -45,7 +45,7 @@ const Header = () => {
                 sideBarItems={dashboardSidebar}
             />
             <Navbar className="main_header" collapseOnSelect expand="lg">
-                <Container>
+                <Container fluid>
                     <Navbar.Brand>
                         <div>
                             <img src={mainLogo} alt='' />

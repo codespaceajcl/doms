@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Capital Development Authority</title>
-    <meta name="description" content="Lightweight solution for deploying single page apps with GitHub Pages.">
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="AJCL Warehouse Management System" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
 
-    <!-- favicon -->
-    <!-- <link rel="icon" type=”image/svg+xml” href="/favicon/green-grid-144-168-192.svg">
-    <link rel="alternate icon" type="image/png" href="/favicon/green-grid-144-168-192-512x512.png">
-    <link rel="apple-touch-icon" href="/favicon/green-grid-144-168-192-180x180.png">
-    <link rel="manifest" href="/favicon/site.webmanifest"> -->
-    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <title>CDA - Directorate of Land and Rehabilitation</title>
 
     <script type="text/javascript">
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
+      (function (l) {
+        if (l.search[1] === "/") {
+          var decoded = l.search
+            .slice(1)
+            .split("&")
+            .map(function (s) {
+              return s.replace(/~and~/g, "&");
+            })
+            .join("?");
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + decoded + l.hash
           );
         }
-      }(window.location))
+      })(window.location);
     </script>
-    <!-- End Single Page Apps for GitHub Pages -->
-
   </head>
   <body>
     <div id="root"></div>
-    <!-- single page app in bundle.js -->
+
     <script src="/build/bundle.js"></script>
   </body>
 </html>

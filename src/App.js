@@ -8,6 +8,7 @@ import Dashboard from './Container/Dashboard/Dashboard';
 import { ToastContainer } from "react-toastify";
 import NotFound from './Container/Pages/NotFound/NotFound';
 import Register from './Container/Auth/Register';
+import TrackPlot from './Container/Pages/TrackPlots/TrackPlot';
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/dashboard/registration' element={<Form />} />
           <Route path='/dashboard/application' element={<Table />} />
+          <Route path='/dashboard/track-plots' element={<TrackPlot />} />
         </Route>
 
         <Route path="/" element={<Login />} />

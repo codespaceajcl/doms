@@ -20,6 +20,11 @@ export const dashboardSidebar = [
         title: "View Applications",
     },
     {
+        path: "/dashboard/track-plots",
+        icon: <MdOutlineGridView />,
+        title: "Track Plots",
+    },
+    {
         path: "",
         icon: <RiLogoutCircleRLine />,
         title: "Logout",

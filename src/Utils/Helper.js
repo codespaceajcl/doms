@@ -24,3 +24,21 @@ export const dashboardColorStyles = {
         };
     },
 };
+
+export const chartStyle = {
+    control: (baseStyles, state) => ({
+        ...baseStyles,
+        backgroundColor: 'white', borderRadius: "5px", cursor: "pointer", fontSize: "13px", boxShadow: "none",
+        borderColor: state.isFocused || state.isHovered || state.isActive || state.onHovered ? '#A9C23F' : '#787878',
+        '&:hover': {
+            borderColor: state.isFocused || state.isActive ? '#A9C23F' : '#787878',
+        },
+        width: "140px"
+    }),
+    option: (styles) => {
+        return {
+            ...styles,
+            fontSize: "13px",
+        };
+    },
+};

@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import { LoginReducer, RegisterReducer } from "./auth";
 import { applicationGetReducer, dashboardGetReducer, 
-    formCreateReducer, formSaveReducer } from "./Dashboard";
+    formCreateReducer, formSaveReducer, tractPlotGetReducer } from "./Dashboard";
 
 const rootReducer = combineReducers({
 
@@ -17,7 +17,8 @@ const rootReducer = combineReducers({
     getTable: applicationGetReducer,
 
     //DASHBOARD
-    getDashboard: dashboardGetReducer
+    getDashboard: dashboardGetReducer,
+    getPlotData: tractPlotGetReducer
 
 })
 

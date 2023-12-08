@@ -105,3 +105,27 @@ export const dashboardGetReducer = (state = {}, action) => {
             return state;
     }
 }
+
+export const tractPlotGetReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "TRACK_PLOT_GET_REQUEST":
+            return {
+                ...state,
+                loading: true,
+            };
+        case "TRACK_PLOT_GET_SUCCESS":
+            return {
+                ...state,
+                loading: false,
+                plotGetData: action.payload,
+            };
+        case "TRACK_PLOT_GET_FAILED":
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+        default:
+            return state;
+    }
+}

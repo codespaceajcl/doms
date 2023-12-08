@@ -27,12 +27,12 @@
     gap: 20px;
 }
 
-.application_main .search_tables div {
+.application_main .search_tables .searching, .application_main .search_tables .filteration {
     border: none;
     border-bottom: 1.5px solid #787878;
 }
 
-.application_main .search_tables div input {
+.application_main .search_tables div input.search_no {
     border: none;
 }
 
@@ -40,7 +40,7 @@
     cursor: pointer;
 }
 
-.application_main .search_tables div:first-child input {
+.application_main .search_tables div:first-child input.search_no {
     font-size: 14px;
     color: #787878;
     width: 220px;
@@ -171,4 +171,52 @@
 
 .table_dots div ul li:first-child {
     border-bottom: 1px solid lightgray;
+}
+
+.filteration{
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.filteration p{
+    margin-bottom: 0;
+    width: 50px;
+    color: #787878;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.searching .filter_checkboxes{
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0px 10px 20px 0px rgba(194, 194, 194, 0.16), 0px 0px 30px 0px rgba(170, 170, 170, 0.16);
+    top: 40px;
+    right: 10px;
+    border: 1px solid #E0E4EC;
+    border-radius: 7px;
+    width: 180px;
+    padding: 15px 13px;
+}
+
+.searching .filter_checkboxes .form-check-label{
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.searching .filter_checkboxes .form-check-input{
+    width: 15px;
+    height: 15px;
+}
+
+.searching .filter_checkboxes .form-check-inline{
+    margin-bottom: 5px;
+}
+
+.searching .form-check-input:focus{
+    box-shadow: none;
+}
+
+.searching svg{
+    cursor: pointer;
 }

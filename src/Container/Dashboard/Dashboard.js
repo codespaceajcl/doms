@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Row, Table } from 'react-bootstrap';
+import { Col, Form, Row, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Announcement from '../../Components/Announcement/Announcement'
-import { getCurrentUser } from '../../Utils/Helper';
+import { chartStyle, dashboardColorStyles, getCurrentUser } from '../../Utils/Helper';
 import { applicationGet, dashboardGet } from '../../Redux/Action/Dashboard';
 import Loader from '../../Utils/Loader';
 import {
@@ -12,6 +12,7 @@ import { Doughnut, Bar } from 'react-chartjs-2';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdClose } from "react-icons/md";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
+import Select from "react-select";
 import './Dashboard.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -37,11 +38,15 @@ const Dashboard = () => {
   const [searchNo, setSearchNo] = useState('')
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
+  const [showFilter, setShowFilter] = useState(false)
+  const [selectedFields, setSelectedFields] = useState([
+    'referenceNo',
+    'fullName',
+    'serialNo',
+  ]);
 
   const { loading, tableGetData } = useSelector((state) => state.getTable)
-  const { loading: dashLoading, dashGetData } = useSelector((state) => state.getDashboard)
-
-  console.log(dashGetData)
+  const { dashGetData } = useSelector((state) => state.getDashboard)
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -67,13 +72,44 @@ const Dashboard = () => {
     setGetTableData(tableGetData?.data)
   }, [tableGetData])
 
-  const searchHandler = () => {
+  const handleCheckboxChange = (fieldName) => {
+    const updatedFields = selectedFields.includes(fieldName)
+      ? selectedFields.filter((field) => field !== fieldName)
+      : [...selectedFields, fieldName];
+
     const filteredData = tableGetData?.data?.filter((t) =>
-      t.referenceNo.toLowerCase().includes(searchNo.toLowerCase())
+      updatedFields.some(
+        (field) =>
+          t[field] &&
+          t[field].toString().toLowerCase().includes(searchNo)
+      )
     );
 
-    setGetTableData(filteredData)
-  }
+    setGetTableData(filteredData);
+    setSelectedFields(updatedFields);
+  };
+
+  const searchHandler = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+
+    if (!searchTerm) {
+      setGetTableData(tableGetData?.data);
+    }
+
+    else if (getTableData) {
+      const filteredData = tableGetData?.data?.filter((t) =>
+        selectedFields.some(
+          (field) =>
+            t[field] &&
+            t[field].toString().toLowerCase().includes(searchTerm)
+        )
+      );
+
+      setGetTableData(filteredData);
+    }
+
+    setSearchNo(e.target.value);
+  };
 
   const previewHandler = (getDoc) => {
     setPreviewPdf(getDoc)
@@ -176,6 +212,24 @@ const Dashboard = () => {
     }
   }
 
+  const stateOptions = [
+    { value: "Islamabad", label: "Islamabad" },
+    { value: "Karachi", label: "Karachi" },
+    { value: "Lahore", label: "Lahore" },
+    { value: "Quetta", label: "Quetta" },
+  ]
+
+  const cityOptions = [
+    { value: "Punjab", label: "Punjab" },
+    { value: "Sindh", label: "Sindh" },
+    { value: "Balochistan", label: "Balochistan" },
+    { value: "KPK", label: "KPK" },
+  ]
+
+  const [stateOption, setStateOption] = useState(stateOptions[0])
+  const [cityOption, setCityOption] = useState(cityOptions[0])
+
+
   return (
     <div>
       <Announcement />
@@ -196,13 +250,13 @@ const Dashboard = () => {
           </Col>
           <Col md={3}>
             <div className='dashboard_boxes'>
-              <h6>Total Registered <br /> Users</h6>
+              <h6>Total No. of <br /> Sectors</h6>
               <h5>{loading ? 0 : dashGetData?.data?.totalRegisteredUsers}</h5>
             </div>
           </Col>
           <Col md={3}>
             <div className='dashboard_boxes'>
-              <h6>Active Users This <br /> Month</h6>
+              <h6>Total No. of <br /> Plots</h6>
               <h5>{loading ? 0 : dashGetData?.data?.activeUsersThisMonth}</h5>
             </div>
           </Col>
@@ -215,11 +269,41 @@ const Dashboard = () => {
                 <h6>Recent Uploads</h6>
 
                 <div className='search_tables'>
-                  <div>
-                    <input placeholder='Reference No' value={searchNo} name="searchNo" onChange={(e) => setSearchNo(e.target.value)} />
-                    <svg onClick={searchHandler} xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 18 18" fill="none">
-                      <path d="M16.6 18L10.3 11.7C9.8 12.1 9.225 12.4167 8.575 12.65C7.925 12.8833 7.23333 13 6.5 13C4.68333 13 3.14583 12.3708 1.8875 11.1125C0.629167 9.85417 0 8.31667 0 6.5C0 4.68333 0.629167 3.14583 1.8875 1.8875C3.14583 0.629167 4.68333 0 6.5 0C8.31667 0 9.85417 0.629167 11.1125 1.8875C12.3708 3.14583 13 4.68333 13 6.5C13 7.23333 12.8833 7.925 12.65 8.575C12.4167 9.225 12.1 9.8 11.7 10.3L18 16.6L16.6 18ZM6.5 11C7.75 11 8.8125 10.5625 9.6875 9.6875C10.5625 8.8125 11 7.75 11 6.5C11 5.25 10.5625 4.1875 9.6875 3.3125C8.8125 2.4375 7.75 2 6.5 2C5.25 2 4.1875 2.4375 3.3125 3.3125C2.4375 4.1875 2 5.25 2 6.5C2 7.75 2.4375 8.8125 3.3125 9.6875C4.1875 10.5625 5.25 11 6.5 11Z" fill="#787878" />
+                  <div className='searching'>
+                    <input
+                      className='recent_search'
+                      placeholder='Search'
+                      value={searchNo}
+                      name="searchNo"
+                      onChange={searchHandler}
+                    />
+                    <svg onClick={() => setShowFilter(!showFilter)} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <mask id="mask0_351_738" style={{ maskType: "alpha", cursor: "pointer" }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                        <rect width="24" height="24" fill="#D9D9D9" />
+                      </mask>
+                      <g mask="url(#mask0_351_738)">
+                        <path d="M11 20C10.7167 20 10.4792 19.9042 10.2875 19.7125C10.0959 19.5208 10 19.2833 10 19V13L4.20002 5.6C3.95002 5.26667 3.91252 4.91667 4.08752 4.55C4.26252 4.18333 4.56669 4 5.00002 4H19C19.4334 4 19.7375 4.18333 19.9125 4.55C20.0875 4.91667 20.05 5.26667 19.8 5.6L14 13V19C14 19.2833 13.9042 19.5208 13.7125 19.7125C13.5209 19.9042 13.2834 20 13 20H11ZM12 12.3L16.95 6H7.05002L12 12.3Z" fill="#787878" />
+                      </g>
                     </svg>
+
+                    {
+                      showFilter &&
+                      <div className='filter_checkboxes'>
+                        <div key={`inline-checkbox`}>
+                          {['referenceNo', 'fullName', 'serialNo'].map((fieldName) => (
+                            <Form.Check
+                              key={fieldName}
+                              inline
+                              label={fieldName}
+                              name="group1"
+                              type={'checkbox'}
+                              checked={selectedFields.includes(fieldName)}
+                              onChange={() => handleCheckboxChange(fieldName)}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -259,38 +343,51 @@ const Dashboard = () => {
             </div>
           </Col>
           <Col md={6}>
-            <div className='dashboard_chart'>
-              <div style={{ padding: "15px" }}>
-                <h6>Applications Zones Wise (Islamabad)</h6>
+            <div className='main_charts'>
+              <div className='dashboard_chart'>
+                <div style={{ padding: "15px" }}>
+                  <div className='show_state_div'>
+                    <h6>Applicantions by State</h6>
 
-                <div className='zone_wise'>
-                  <div className='donut_chart'>
-                    <Doughnut data={capacityData} options={options} />
-                  </div>
-                  <div>
-                    <ul>
-                      <li><div> <span>Zone I</span>  38.6% </div></li>
-                      <li><div> <span>Zone II</span>  21.6% </div></li>
-                      <li><div> <span>Zone III</span>  22.5% </div></li>
-                      <li><div> <span>Zone IV</span>  30.8% </div></li>
-                      <li style={{ paddingBottom: "0" }}><div> <span>Zone V</span>  8.1% </div></li>
-                    </ul>
+                    <Select options={stateOptions} value={stateOption} onChange={(state) => setStateOption(state)} placeholder="Select State" styles={chartStyle} />
                   </div>
 
+                  <div className='line_chart'>
+                    <Bar options={warehouseOptions} data={warehouseData} />
+                  </div>
                 </div>
               </div>
 
-              <div style={{ padding: "15px" }}>
-                <h6>Applicantions by Area  Union District (Islamabad)</h6>
+              <div className='dashboard_chart'>
+                <div style={{ padding: "15px" }}>
+                  <div className='show_state_div'>
+                    <h6>Applications City Wise</h6>
 
-                <div className='line_chart'>
-                  <Bar options={warehouseOptions} data={warehouseData} />
+                    <Select options={cityOptions} value={cityOption} onChange={(state) => setCityOption(state)} placeholder="Select State" styles={chartStyle} />
+                  </div>
+
+                  <div className='zone_wise'>
+                    <div className='donut_chart'>
+                      <Doughnut data={capacityData} options={options} />
+                    </div>
+                    <div>
+                      <ul>
+                        <li><div> <span>Lahore</span>  38.6% </div></li>
+                        <li><div> <span>Islamabad</span>  21.6% </div></li>
+                        <li><div> <span>Faislabad</span>  22.5% </div></li>
+                        <li><div> <span>Multan</span>  30.8% </div></li>
+                        <li style={{ paddingBottom: "0" }}><div> <span>Others</span>  8.1% </div></li>
+                      </ul>
+                    </div>
+
+                  </div>
                 </div>
               </div>
 
               <div className='overlay_coming_soon'>
                 <h2>COMING SOON</h2>
               </div>
+
             </div>
           </Col>
         </Row>
