@@ -60,6 +60,12 @@ const RegistrationForm = () => {
   }, [printLoader]);
 
   useEffect(() => {
+    return () => {
+      setShowPrintOnce(false)
+    }
+  }, [])
+
+  useEffect(() => {
     if (formSaveData?.response === 'success') {
       setTab('submit')
       setPrintLink(formSaveData?.link)

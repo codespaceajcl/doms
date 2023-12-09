@@ -11,6 +11,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     border-bottom: 1px solid #E0E4EC;
     padding: 12px;
 }
@@ -61,15 +62,15 @@
 }
 
 .application_table thead tr th {
-    text-transform: uppercase;
+    text-transform: capitalize;
     padding: 10px 5px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
 }
 
 .application_table tbody tr td {
     padding: 10px 5px;
-    font-size: 13px;
+    font-size: 12px;
     color: #313131;
 }
 
@@ -219,4 +220,17 @@
 
 .searching svg{
     cursor: pointer;
+}
+
+@media (max-width: 468px) {
+    .table_main .application_main .heading{
+        flex-direction: column;
+        align-items: start;
+        gap: 10px;
+    }
+
+    .searching .filter_checkboxes{
+        top: 80px;
+    }
+    
 }

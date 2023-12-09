@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Table.css';
 import Table from 'react-bootstrap/Table';
-import { MdOutlineRemoveRedEye, MdOutlineFileDownload } from "react-icons/md";
+import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdOutlineFileUpload } from "react-icons/md";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useDispatch, useSelector } from 'react-redux';
 import { applicationGet } from '../../../Redux/Action/Dashboard';
@@ -35,11 +35,10 @@ const TableView = () => {
   const [showFilter, setShowFilter] = useState(false)
   const [selectedFields, setSelectedFields] = useState([
     'referenceNo',
-    'fullName',
     'serialNo',
     'cdaSerialNo',
-    'date',
-    'videOrderDate',
+    'fullName',
+    'plot'
   ]);
 
   function onDocumentLoadSuccess({ numPages }) {
@@ -112,16 +111,37 @@ const TableView = () => {
     setShowCrudList(updatedShowCrudList);
   };
 
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+    // You can perform additional actions with the selected file if needed
+  };
+
+  const handleIconClick = () => {
+    // Trigger the file input when the icon is clicked
+    document.getElementById('fileInput').click();
+  };
+
   const offset = currentPage * itemsPerPage;
   const currentItems = getTableData?.slice(offset, offset + itemsPerPage).map((t, i) => {
     return (
       <tr>
         <td>{t?.referenceNo}</td>
-        <td>{t?.fullName}</td>
         <td>{t?.serialNo}</td>
         <td>{t?.cdaSerialNo}</td>
-        <td>{moment(t?.date).format('L')} </td>
-        <td className='text-center'>{moment(t?.videOrderDate).format('L')}</td>
+        <td>{t?.address}</td>
+        <td>{t?.street}</td>
+        <td>{t?.sector}</td>
+        <td>{t?.plot}</td>
+        <td>{t?.fullName} {t?.fatherName}</td>
+        <td style={{ color: "#5454d8", textAlign: "center", cursor: "pointer" }}> <input
+          type="file"
+          id="fileInput"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        /> <MdOutlineFileUpload onClick={handleIconClick} /></td>
         <td className='text-center'>
           <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
           <span> <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
@@ -188,7 +208,7 @@ const TableView = () => {
                 showFilter &&
                 <div className='filter_checkboxes'>
                   <div key={`inline-checkbox`}>
-                    {['referenceNo', 'fullName', 'serialNo', 'cdaSerialNo', 'date', 'videOrderDate'].map((fieldName) => (
+                    {['referenceNo', 'serialNo', 'cdaSerialNo', 'fullName', 'plot'].map((fieldName) => (
                       <Form.Check
                         key={fieldName}
                         inline
@@ -269,14 +289,16 @@ const TableView = () => {
               <Table responsive>
                 <thead>
                   <tr>
-                    <th>reference no</th>
-                    <th>full name</th>
-                    <th>serial No</th>
-                    <th>CDA Serial No</th>
-                    <th>Date</th>
-                    <th>vide Order Date</th>
-                    <th>Action</th>
-                    <th></th>
+                    <th style={{ width: "100px" }}>Ref No.</th>
+                    <th>Doc. Serial No.</th>
+                    <th>CDA Serial No.</th>
+                    <th style={{ width: "130px" }}>Address</th>
+                    <th style={{ width: "80px" }}>Street</th>
+                    <th>Sector</th>
+                    <th>Plot No.</th>
+                    <th style={{ width: "120px" }}>Owner Name</th>
+                    <th>Upload</th>
+                    <th className='text-center'>View Download</th>
                   </tr>
                 </thead>
                 <tbody>

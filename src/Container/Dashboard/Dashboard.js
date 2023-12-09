@@ -46,7 +46,9 @@ const Dashboard = () => {
   ]);
 
   const { loading, tableGetData } = useSelector((state) => state.getTable)
-  const { dashGetData } = useSelector((state) => state.getDashboard)
+  const { loading: dashboardLoading, dashGetData } = useSelector((state) => state.getDashboard)
+
+  console.log(dashGetData)
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -116,19 +118,25 @@ const Dashboard = () => {
     setShowPdf(true)
   }
 
+  const generateColors = (numColors) => {
+    const colors = [];
+    for (let i = 0; i < numColors; i++) {
+      const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      colors.push(color);
+    }
+    return colors;
+  };
+
+  const dataLength = dashGetData?.data?.documentsByCity?.length || 0;
+  const dynamicColors = generateColors(dataLength);
+
   const capacityData = {
-    labels: ['38% Zone I', '21% Zone II', '22% Zone III', '30% Zone IV', '8% Zone V'],
+    labels: dashGetData?.data?.documentsByCity?.map((s) => (`${s?.city} ${s?.count}`)),
     datasets: [
       {
         label: '',
-        data: [38, 21, 22, 30, 8],
-        backgroundColor: [
-          '#1c1c1c',
-          '#739b21',
-          '#baedbd',
-          '#95a4fc',
-          '#b1e3ff'
-        ],
+        data: dashGetData?.data?.documentsByCity?.map((s) => (s.count)),
+        backgroundColor: dynamicColors,
         borderWidth: 1,
       },
     ],
@@ -168,29 +176,13 @@ const Dashboard = () => {
     },
   };
 
-  const warehouseLabels = [
-    'UC - 1',
-    'UC - 2',
-    'UC - 3',
-    'UC - 4',
-    'UC - 5',
-    'UC - 6',
-  ];
-
   const warehouseData = {
-    labels: warehouseLabels,
+    labels: dashGetData?.data?.documentsByState?.map((s) => (s.state)),
     datasets: [
       {
         label: '',
-        data: [50, 75, 30, 60, 75, 60],
-        backgroundColor: [
-          '#95A4FC',
-          '#BAEDBD',
-          '#1C1C1C',
-          '#B1E3FF',
-          '#A8C5DA',
-          '#A1E3CB',
-        ],
+        data: dashGetData?.data?.documentsByState?.map((s) => (s.count)),
+        backgroundColor: ['#95A4FC', '#BAEDBD', '#1C1C1C', '#B1E3FF', '#A8C5DA', '#A1E3CB'],
         barThickness: 20,
       },
     ],
@@ -213,7 +205,7 @@ const Dashboard = () => {
   }
 
   const stateOptions = [
-    { value: "Islamabad", label: "Islamabad" },
+    { value: "Pakistan", label: "Pakistan" },
     { value: "Karachi", label: "Karachi" },
     { value: "Lahore", label: "Lahore" },
     { value: "Quetta", label: "Quetta" },
@@ -251,13 +243,13 @@ const Dashboard = () => {
           <Col md={3}>
             <div className='dashboard_boxes'>
               <h6>Total No. of <br /> Sectors</h6>
-              <h5>{loading ? 0 : dashGetData?.data?.totalRegisteredUsers}</h5>
+              <h5>{loading ? 0 : dashGetData?.data?.totalSectors}</h5>
             </div>
           </Col>
           <Col md={3}>
             <div className='dashboard_boxes'>
               <h6>Total No. of <br /> Plots</h6>
-              <h5>{loading ? 0 : dashGetData?.data?.activeUsersThisMonth}</h5>
+              <h5>{loading ? 0 : dashGetData?.data?.totalPlots}</h5>
             </div>
           </Col>
         </Row>
@@ -349,12 +341,15 @@ const Dashboard = () => {
                   <div className='show_state_div'>
                     <h6>Applicantions by State</h6>
 
-                    <Select options={stateOptions} value={stateOption} onChange={(state) => setStateOption(state)} placeholder="Select State" styles={chartStyle} />
+                    <Select isDisabled options={stateOptions} value={stateOption} onChange={(state) => setStateOption(state)} placeholder="Select State" styles={chartStyle} />
                   </div>
 
-                  <div className='line_chart'>
-                    <Bar options={warehouseOptions} data={warehouseData} />
-                  </div>
+                  {
+                    dashboardLoading ? <div className='py-5'> <Loader /> </div> :
+                      <div className='line_chart'>
+                        <Bar options={warehouseOptions} data={warehouseData} />
+                      </div>
+                  }
                 </div>
               </div>
 
@@ -372,11 +367,13 @@ const Dashboard = () => {
                     </div>
                     <div>
                       <ul>
-                        <li><div> <span>Lahore</span>  38.6% </div></li>
-                        <li><div> <span>Islamabad</span>  21.6% </div></li>
-                        <li><div> <span>Faislabad</span>  22.5% </div></li>
-                        <li><div> <span>Multan</span>  30.8% </div></li>
-                        <li style={{ paddingBottom: "0" }}><div> <span>Others</span>  8.1% </div></li>
+                        {
+                          dashGetData?.data?.documentsByCity?.map((s) => {
+                            return (
+                              <li><div> <span>{s.city}</span>  {s.count} </div></li>
+                            )
+                          })
+                        }
                       </ul>
                     </div>
 
@@ -384,9 +381,9 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className='overlay_coming_soon'>
+              {/* <div className='overlay_coming_soon'>
                 <h2>COMING SOON</h2>
-              </div>
+              </div> */}
 
             </div>
           </Col>
