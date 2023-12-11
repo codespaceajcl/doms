@@ -100,6 +100,25 @@ const TrackPlots = () => {
         }
     }
 
+    const downloadCSV = () => {
+        const fieldsToInclude = ['referenceNo', 'serialNo', 'cdaSerialNo', 'address', 'street', 'sector', 'plot', 'fullName', 'fatherName'];
+
+        const csvContent = getTableData.reduce((acc, item) => {
+            const values = fieldsToInclude.map((field) => `"${item[field]}"`);
+            return acc + values.join(',') + '\r\n';
+        }, fieldsToInclude.join(',') + '\r\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'tract_plot.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+
     return (
         <div className='table_main'>
             <Announcement />
@@ -124,13 +143,17 @@ const TrackPlots = () => {
                     </div>
                 </div>
 
+                <div className='download_csv'>
+                    <button disabled={getTableData?.length === 0 ? true : false} onClick={downloadCSV}><MdOutlineFileDownload style={{ fontSize: "20px" }} /> Download CSV</button>
+                </div>
+
                 {
                     loading ? <div className='py-3'>
                         <Loader />
                     </div> :
                         <div className='application_table'>
                             <Table responsive>
-                                <thead>
+                                <thead style={{ borderTop: "1px solid lightgray" }}>
                                     <tr>
                                         <th style={{ width: "100px", padding: "12px" }}>Ref No.</th>
                                         <th>Doc. Serial No.</th>

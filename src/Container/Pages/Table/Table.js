@@ -316,6 +316,30 @@ const TableView = () => {
     }
   };
 
+  const downloadCSV = () => {
+    const headerFields = Object.keys(showingFields).filter(field => showingFields[field]);
+    const headerRow = headerFields.map(field => getFieldLabel(field));
+    headerRow.push('View Download', 'SignOff Upload / Download');
+
+    const dataRows = getTableData?.map(t => {
+      const dataRow = headerFields.map(field => getFieldValue(t, field));
+      dataRow.push(t.document || '', t.signOffDocument === 'no' ? '' : t.signOffDocument || '');
+      return dataRow;
+    });
+
+    const allRows = [headerRow, ...dataRows];
+    const csvContent = allRows.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'application.csv';
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+  }
+
   return (
     <div className='table_main'>
       {modal}
@@ -398,13 +422,17 @@ const TableView = () => {
           </div>
         </div>
 
+        <div className='download_csv'>
+          <button onClick={downloadCSV}><MdOutlineFileDownload style={{ fontSize: "20px" }} /> Download CSV</button>
+        </div>
+
         {
           loading ? <div className='py-3'>
             <Loader />
           </div> :
             <div className='application_table'>
               <Table responsive>
-                <thead>
+                <thead style={{ borderTop: "1px solid lightgray" }}>
                   <tr>
                     {Object.keys(showingFields).map((field) => (
                       showingFields[field] && (

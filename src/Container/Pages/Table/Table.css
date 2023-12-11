@@ -59,7 +59,7 @@
 } */
 
 .application_table {
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .application_table thead tr th {
@@ -232,6 +232,30 @@
 
 .searching svg{
     cursor: pointer;
+}
+
+.download_csv {
+    margin-top: 20px;
+    margin-right: 15px;
+    display: flex;
+    justify-content: end;
+}
+
+.download_csv button{
+    background-color: #739B21;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 13px;
+    border-radius: 7px;
+    font-weight: 600;
+    display: flex;
+    align-items: end;
+    gap: 3px;
+}
+
+.download_csv button:disabled{
+    background-color: #739b21cf;
 }
 
 @media (max-width: 468px) {
