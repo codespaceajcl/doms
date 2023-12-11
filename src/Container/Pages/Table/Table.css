@@ -13,7 +13,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
     border-bottom: 1px solid #E0E4EC;
-    padding: 12px;
+    padding: 15px;
 }
 
 .table_main .application_main .heading h5 {
@@ -31,6 +31,7 @@
 .application_main .search_tables .searching, .application_main .search_tables .filteration {
     border: none;
     border-bottom: 1.5px solid #787878;
+    position: relative;
 }
 
 .application_main .search_tables div input.search_no {
@@ -68,10 +69,18 @@
     font-weight: 600;
 }
 
+.application_table thead tr th:first-child{
+    padding-left: 15px !important;
+}
+
 .application_table tbody tr td {
     padding: 10px 5px;
     font-size: 12px;
     color: #313131;
+}
+
+.application_table tbody tr td:first-child{
+    padding-left: 15px !important;
 }
 
 .application_table tbody tr td svg {
@@ -188,30 +197,33 @@
     cursor: pointer;
 }
 
-.searching .filter_checkboxes{
+.searching .filter_checkboxes, .filteration .filter_checkboxes{
     position: absolute;
     background-color: #fff;
     box-shadow: 0px 10px 20px 0px rgba(194, 194, 194, 0.16), 0px 0px 30px 0px rgba(170, 170, 170, 0.16);
-    top: 40px;
-    right: 10px;
+    top: 30px;
+    right: 0px;
     border: 1px solid #E0E4EC;
     border-radius: 7px;
     width: 180px;
     padding: 15px 13px;
 }
 
-.searching .filter_checkboxes .form-check-label{
+.searching .filter_checkboxes .form-check-label, .filteration .filter_checkboxes .form-check-label{
     font-size: 13px;
     font-weight: 500;
 }
 
-.searching .filter_checkboxes .form-check-input{
+.searching .filter_checkboxes .form-check-input, .filteration .filter_checkboxes .form-check-input{
     width: 15px;
     height: 15px;
 }
 
-.searching .filter_checkboxes .form-check-inline{
+.searching .filter_checkboxes .form-check-inline, .filteration .filter_checkboxes .form-check-inline{
     margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .searching .form-check-input:focus{

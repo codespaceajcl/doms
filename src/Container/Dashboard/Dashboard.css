@@ -73,20 +73,15 @@
     background-color: transparent;
 }
 
-.application_table.recent_table .table-responsive {
-    height: 865px;
-    overflow-y: scroll;
-}
-
-.application_table.recent_table .table-responsive::-webkit-scrollbar {
+.table_scroll::-webkit-scrollbar {
     width: 0px;
 }
 
-.application_table.recent_table .table-responsive::-webkit-scrollbar-track {
+.table_scroll::-webkit-scrollbar-track {
     box-shadow: none;
 }
 
-.application_table.recent_table .table-responsive::-webkit-scrollbar-thumb {
+.table_scroll::-webkit-scrollbar-thumb {
     background-color: transparent;
 }
 
@@ -115,7 +110,7 @@
 
 .dashboard_chart .zone_wise{
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     margin: 40px 0;
     justify-content: space-around;
     align-items: center;

@@ -33,7 +33,7 @@ const Sidebar = () => {
                 {
                     dashboardSidebar?.map((s) => {
                         return (
-                            <li className={pathname === s.path ? 'side_active' : ''}
+                            <li key={s.title} className={pathname === s.path ? 'side_active' : ''}
                                 onClick={s.path.length > 0 ? () => navigate(s.path) : () => setShow(true)}>
                                 {s.icon}
                                 {s.title}

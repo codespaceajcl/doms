@@ -106,24 +106,30 @@ export const dashboardGetReducer = (state = {}, action) => {
     }
 }
 
-export const tractPlotGetReducer = (state = {}, action) => {
+export const ApplicationUploadReducer = (state = {}, action) => {
     switch (action.type) {
-        case "TRACK_PLOT_GET_REQUEST":
+        case "APPLICATION_UPLOAD_REQUEST":
             return {
                 ...state,
                 loading: true,
             };
-        case "TRACK_PLOT_GET_SUCCESS":
+        case "APPLICATION_UPLOAD_SUCCESS":
             return {
                 ...state,
                 loading: false,
-                plotGetData: action.payload,
+                applicationUploadData: action.payload,
             };
-        case "TRACK_PLOT_GET_FAILED":
+        case "APPLICATION_UPLOAD_FAILED":
             return {
                 ...state,
                 loading: false,
                 error: action.payload,
+            };
+        case "APPLICATION_UPLOAD_RESET":
+            return {
+                ...state,
+                applicationUploadData: null,
+                error: null
             };
         default:
             return state;

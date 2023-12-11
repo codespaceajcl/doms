@@ -28,8 +28,6 @@ const Register = () => {
         }
     }, [])
 
-    console.log(getRegisterData)
-
     useEffect(() => {
         if (getRegisterData?.response === 'Email Already Exist') {
             errorNotify(getRegisterData?.response)

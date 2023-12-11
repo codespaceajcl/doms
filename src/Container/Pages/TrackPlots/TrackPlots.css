@@ -29,11 +29,9 @@
     display: flex;
     align-items: center;
     gap: 0 4px;
-    border: 1px solid lightgray;
-    padding: 5px 12px;
     border-radius: 5px;
-    padding: 8px 10px;
-    border: 1px solid #787878;
+    padding: 0;
+    border: 1px solid #78787885;
 }
 
 .application_main .plot_search input {
@@ -41,6 +39,7 @@
     border: none;
     font-size: 13px;
     color: #787878;
+    padding: 0 10px;
 }
 
 .application_main .plot_search input:focus-visible {
@@ -49,4 +48,9 @@
 
 .application_main .plot_search svg{
     cursor: pointer;
+    background-color: #739B21;
+    color: #fff;
+    padding: 5px 12px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
 }

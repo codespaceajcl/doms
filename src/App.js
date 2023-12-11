@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Login from './Container/Auth/Login';
 import UserLayout from './Layout/UserLayout';
 import Form from './Container/Pages/Form/Form';

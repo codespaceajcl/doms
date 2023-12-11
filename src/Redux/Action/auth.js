@@ -34,7 +34,7 @@ export const AuthLogin = (inputData) => async (dispatch) => {
     catch (e) {
         dispatch({
             type: "LOGIN_FAILED",
-            payload: e.response.data.message,
+            payload: e?.message,
             success: false,
         });
     }
@@ -71,7 +71,7 @@ export const AuthRegister = (inputData) => async (dispatch) => {
     catch (e) {
         dispatch({
             type: "REGISTER_FAILED",
-            payload: e.response.data.message,
+            payload: e?.message,
             success: false,
         });
     }

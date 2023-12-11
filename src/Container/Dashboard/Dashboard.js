@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Col, Form, Row, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Announcement from '../../Components/Announcement/Announcement'
-import { chartStyle, dashboardColorStyles, getCurrentUser } from '../../Utils/Helper';
+import { chartStyle, getCurrentUser } from '../../Utils/Helper';
 import { applicationGet, dashboardGet } from '../../Redux/Action/Dashboard';
 import Loader from '../../Utils/Loader';
 import {
@@ -32,6 +32,8 @@ ChartJS.register(
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const heightRef = useRef();
+
   const [showPdf, setShowPdf] = useState(false)
   const [previewPdf, setPreviewPdf] = useState('')
   const [getTableData, setGetTableData] = useState([])
@@ -44,11 +46,11 @@ const Dashboard = () => {
     'fullName',
     'serialNo',
   ]);
+  const [showStateData, setShowStateData] = useState([])
+  const [showCityData, setShowCityData] = useState([])
 
   const { loading, tableGetData } = useSelector((state) => state.getTable)
   const { loading: dashboardLoading, dashGetData } = useSelector((state) => state.getDashboard)
-
-  console.log(dashGetData)
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -118,29 +120,17 @@ const Dashboard = () => {
     setShowPdf(true)
   }
 
-  const generateColors = (numColors) => {
-    const colors = [];
-    for (let i = 0; i < numColors; i++) {
-      const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-      colors.push(color);
-    }
-    return colors;
-  };
+  // const generateColors = (numColors) => {
+  //   const colors = [];
+  //   for (let i = 0; i < numColors; i++) {
+  //     const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+  //     colors.push(color);
+  //   }
+  //   return colors;
+  // };
 
-  const dataLength = dashGetData?.data?.documentsByCity?.length || 0;
-  const dynamicColors = generateColors(dataLength);
-
-  const capacityData = {
-    labels: dashGetData?.data?.documentsByCity?.map((s) => (`${s?.city} ${s?.count}`)),
-    datasets: [
-      {
-        label: '',
-        data: dashGetData?.data?.documentsByCity?.map((s) => (s.count)),
-        backgroundColor: dynamicColors,
-        borderWidth: 1,
-      },
-    ],
-  };
+  // const dataLength = dashGetData?.data?.documentsByCity?.length || 0;
+  // const dynamicColors = generateColors(dataLength);
 
   const options = {
     plugins: {
@@ -176,18 +166,6 @@ const Dashboard = () => {
     },
   };
 
-  const warehouseData = {
-    labels: dashGetData?.data?.documentsByState?.map((s) => (s.state)),
-    datasets: [
-      {
-        label: '',
-        data: dashGetData?.data?.documentsByState?.map((s) => (s.count)),
-        backgroundColor: ['#95A4FC', '#BAEDBD', '#1C1C1C', '#B1E3FF', '#A8C5DA', '#A1E3CB'],
-        barThickness: 20,
-      },
-    ],
-  };
-
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
   }
@@ -204,22 +182,92 @@ const Dashboard = () => {
     }
   }
 
-  const stateOptions = [
-    { value: "Pakistan", label: "Pakistan" },
-    { value: "Karachi", label: "Karachi" },
-    { value: "Lahore", label: "Lahore" },
-    { value: "Quetta", label: "Quetta" },
-  ]
+  const stateOptions = dashGetData ? dashGetData?.data?.documentsByState?.reduce((uniqueCountries, c) => {
+    if (!uniqueCountries?.has(c.country)) {
+      uniqueCountries?.add(c?.country);
+      return uniqueCountries;
+    }
+    return uniqueCountries;
+  }, new Set()) : []
 
-  const cityOptions = [
-    { value: "Punjab", label: "Punjab" },
-    { value: "Sindh", label: "Sindh" },
-    { value: "Balochistan", label: "Balochistan" },
-    { value: "KPK", label: "KPK" },
-  ]
+  const stateOptionsArray = stateOptions ? Array.from(stateOptions).map(country => ({ value: country, label: country })) : []
 
-  const [stateOption, setStateOption] = useState(stateOptions[0])
-  const [cityOption, setCityOption] = useState(cityOptions[0])
+  const cityOptions = dashGetData ? dashGetData?.data?.documentsByCity?.reduce((uniqueCountries, c) => {
+    if (!uniqueCountries?.has(c.country)) {
+      uniqueCountries?.add(c.country);
+      return uniqueCountries;
+    }
+    return uniqueCountries;
+  }, new Set()) : []
+
+  const cityOptionsArray = cityOptions ? Array.from(cityOptions).map(country => ({ value: country, label: country })) : []
+
+  const [stateOption, setStateOption] = useState({ value: "Pakistan", label: "Pakistan" })
+  const [cityOption, setCityOption] = useState({ value: "Pakistan", label: "Pakistan" })
+
+  const warehouseData = {
+    labels: showStateData?.map((s) => (s?.state)),
+    datasets: [
+      {
+        label: '',
+        data: showStateData?.map((s) => (s?.count)),
+        backgroundColor: ['#95A4FC', '#BAEDBD', '#1C1C1C', '#B1E3FF', '#A8C5DA', '#A1E3CB'],
+        barThickness: 20,
+      },
+    ],
+  };
+
+  const capacityData = {
+    labels: showCityData?.map((s) => (`${s?.city} ${s?.count}`)),
+    datasets: [
+      {
+        label: '',
+        data: showCityData?.map((s) => (s?.count)),
+        backgroundColor: ["#1c1c1c", "#95a4fc", "#b1e3ff", "#baedbd"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  useEffect(() => {
+
+    const filteredArrCity = dashGetData ? dashGetData?.data?.documentsByCity?.filter(item => item?.country === cityOption?.value) : []
+    const result = filteredArrCity?.map(item => ({ city: item?.city, count: item?.count }));
+    setShowCityData(result)
+
+  }, [dashGetData, cityOption])
+
+  useEffect(() => {
+
+    const filteredArr = dashGetData ? dashGetData?.data?.documentsByState?.filter(item => item?.country === stateOption?.value) : []
+    const result = filteredArr?.map(item => ({ state: item?.state, count: item?.count }));
+    setShowStateData(result)
+
+  }, [dashGetData, stateOption])
+
+  useEffect(() => {
+    const updateTableScrollHeight = () => {
+      const tableScroll = document.querySelector('.table_scroll');
+      const mainCharts = document.querySelector('.main_charts');
+
+      if (tableScroll && mainCharts) {
+        const newHeight = `${mainCharts.clientHeight - 58}px`;
+        tableScroll.style.height = newHeight;
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(updateTableScrollHeight);
+    const mainCharts = document.querySelector('.main_charts');
+    if (mainCharts) {
+      resizeObserver.observe(mainCharts);
+    }
+
+    return () => {
+      if (mainCharts) {
+        resizeObserver.unobserve(mainCharts);
+      }
+    };
+  }, []);
 
 
   return (
@@ -302,46 +350,47 @@ const Dashboard = () => {
 
               {
                 loading ? <div className='py-3'> <Loader /> </div> :
-                  <Table responsive>
-                    <thead>
-                      <tr>
-                        <th>reference no</th>
-                        <th>full name</th>
-                        <th style={{ width: "85px" }}>Serial No</th>
-                        <th style={{ width: "70px" }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {
-                        getTableData?.map((t, i) => {
-                          return (
-                            <tr>
-                              <td>{t?.referenceNo}</td>
-                              <td>{t?.fullName}</td>
-                              <td className='text-center'>{t?.serialNo}</td>
-                              <td className='text-center'>
-                                <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
-                                <span> <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
-                                  <MdOutlineFileDownload /> </a> </span>
-                              </td>
-
-                            </tr>
-                          )
-                        })
-                      }
-                    </tbody>
-                  </Table>
+                  <div className='table_scroll' style={{ height: heightRef.current && `${heightRef.current.clientHeight - 58}px`, overflowY: "scroll" }}>
+                    <Table responsive>
+                      <thead>
+                        <tr>
+                          <th style={{ paddingLeft: "12px", width: "100px" }}>reference no</th>
+                          <th>full name</th>
+                          <th style={{ width: "85px" }}>Serial No</th>
+                          <th style={{ width: "70px" }} className='text-center'>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          getTableData?.map((t) => {
+                            return (
+                              <tr key={t?.id}>
+                                <td style={{ paddingLeft: "12px", width: "100px" }}>{t?.referenceNo}</td>
+                                <td>{t?.fullName}</td>
+                                <td className='text-center'>{t?.serialNo}</td>
+                                <td className='text-center'>
+                                  <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
+                                  <span> <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
+                                    <MdOutlineFileDownload /> </a> </span>
+                                </td>
+                              </tr>
+                            )
+                          })
+                        }
+                      </tbody>
+                    </Table>
+                  </div>
               }
             </div>
           </Col>
           <Col md={6}>
-            <div className='main_charts'>
+            <div className='main_charts' ref={heightRef}>
               <div className='dashboard_chart'>
                 <div style={{ padding: "15px" }}>
                   <div className='show_state_div'>
                     <h6>Applicantions by State</h6>
 
-                    <Select isDisabled options={stateOptions} value={stateOption} onChange={(state) => setStateOption(state)} placeholder="Select State" styles={chartStyle} />
+                    <Select options={stateOptionsArray} value={stateOption} onChange={(state) => setStateOption(state)} placeholder="Select State" styles={chartStyle} />
                   </div>
 
                   {
@@ -358,33 +407,30 @@ const Dashboard = () => {
                   <div className='show_state_div'>
                     <h6>Applications City Wise</h6>
 
-                    <Select options={cityOptions} value={cityOption} onChange={(state) => setCityOption(state)} placeholder="Select State" styles={chartStyle} />
+                    <Select options={cityOptionsArray} value={cityOption} onChange={(state) => setCityOption(state)} placeholder="Select State" styles={chartStyle} />
                   </div>
 
-                  <div className='zone_wise'>
-                    <div className='donut_chart'>
-                      <Doughnut data={capacityData} options={options} />
-                    </div>
-                    <div>
-                      <ul>
-                        {
-                          dashGetData?.data?.documentsByCity?.map((s) => {
-                            return (
-                              <li><div> <span>{s.city}</span>  {s.count} </div></li>
-                            )
-                          })
-                        }
-                      </ul>
-                    </div>
-
-                  </div>
+                  {
+                    dashboardLoading ? <div className='py-5'> <Loader /> </div> :
+                      <div className='zone_wise'>
+                        <div className='donut_chart'>
+                          <Doughnut data={capacityData} options={options} />
+                        </div>
+                        <div>
+                          <ul>
+                            {
+                              showCityData?.map((s) => {
+                                return (
+                                  <li><div> <span>{s.city}</span>  {s.count} </div></li>
+                                )
+                              })
+                            }
+                          </ul>
+                        </div>
+                      </div>
+                  }
                 </div>
               </div>
-
-              {/* <div className='overlay_coming_soon'>
-                <h2>COMING SOON</h2>
-              </div> */}
-
             </div>
           </Col>
         </Row>

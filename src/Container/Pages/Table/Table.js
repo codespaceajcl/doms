@@ -2,22 +2,21 @@ import React, { useEffect, useState } from 'react';
 import './Table.css';
 import Table from 'react-bootstrap/Table';
 import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdOutlineFileUpload } from "react-icons/md";
-import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useDispatch, useSelector } from 'react-redux';
-import { applicationGet } from '../../../Redux/Action/Dashboard';
+import { ApplicationUpload, applicationGet } from '../../../Redux/Action/Dashboard';
 import Loader from '../../../Utils/Loader';
 import { getCurrentUser } from '../../../Utils/Helper';
 import { pdfjs } from 'react-pdf';
 import { MdClose } from "react-icons/md";
 import { Document, Page } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 import { FaChevronRight } from "react-icons/fa";
 import { FaChevronLeft } from "react-icons/fa";
-import moment from 'moment';
 import ReactPaginate from 'react-paginate';
 import Announcement from '../../../Components/Announcement/Announcement';
-import { Form } from 'react-bootstrap';
+import { Form, Modal, Spinner } from 'react-bootstrap';
+import { successNotify } from '../../../Utils/Toast';
+import { FiColumns } from "react-icons/fi";
+import moment from 'moment';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -31,7 +30,6 @@ const TableView = () => {
   const [previewPdf, setPreviewPdf] = useState('')
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
-  const [showCrudList, setShowCrudList] = useState([]);
   const [showFilter, setShowFilter] = useState(false)
   const [selectedFields, setSelectedFields] = useState([
     'referenceNo',
@@ -40,12 +38,31 @@ const TableView = () => {
     'fullName',
     'plot'
   ]);
+  const [getIndvId, setGetIndvId] = useState('')
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [showColumns, setShowColumns] = useState(false)
+  const [showingFields, setShowingFields] = useState({
+    Ref_No: true,
+    Doc_Serial_No: true,
+    CDA_Serial_No: true,
+    Address: true,
+    Street: true,
+    Sector: true,
+    Plot_No: true,
+    Owner_Name: true,
+    country: false,
+    state: false,
+    city: false,
+    plotSize: false,
+    videOrderDate: false
+  });
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
   }
 
-  const { loading, tableGetData, error } = useSelector((state) => state.getTable)
+  const { loading, tableGetData } = useSelector((state) => state.getTable)
+  const { loading: uploadLoading, applicationUploadData } = useSelector((state) => state.postApplicationUpload)
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -60,6 +77,23 @@ const TableView = () => {
   useEffect(() => {
     setGetTableData(tableGetData?.data)
   }, [tableGetData])
+
+  useEffect(() => {
+    if (applicationUploadData?.response === 'success') {
+      setGetIndvId('')
+      setFile(null)
+      successNotify("Sign Off Document Uploaded Successfully!")
+      dispatch({ type: "APPLICATION_UPLOAD_RESET" })
+
+      const currentUser = getCurrentUser();
+      const formData = new FormData();
+      formData.append("token", currentUser?.token)
+      formData.append("email", currentUser?.email)
+
+      dispatch(applicationGet(formData))
+      setShowConfirm(false)
+    }
+  }, [applicationUploadData])
 
   const handleCheckboxChange = (fieldName) => {
     const updatedFields = selectedFields.includes(fieldName)
@@ -105,61 +139,97 @@ const TableView = () => {
     setShowPdf(true)
   }
 
-  const handleShowCrudToggle = (index) => {
-    const updatedShowCrudList = [...showCrudList];
-    updatedShowCrudList[index] = !updatedShowCrudList[index];
-    setShowCrudList(updatedShowCrudList);
-  };
-
   const [file, setFile] = useState(null);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-    // You can perform additional actions with the selected file if needed
+
+    if (selectedFile) {
+      setFile(selectedFile)
+      setShowConfirm(true)
+    }
   };
 
-  const handleIconClick = () => {
-    // Trigger the file input when the icon is clicked
+  const handleIconClick = (getId) => {
+    setGetIndvId(getId)
     document.getElementById('fileInput').click();
+  };
+
+  const getCellStyles = (field) => {
+    const styles = {};
+    if (field === 'Ref_No') {
+      styles.paddingLeft = '15px';
+    }
+    return styles;
+  };
+
+  const getFieldValue = (data, field) => {
+    switch (field) {
+      case 'Ref_No':
+        return data.referenceNo;
+      case 'Doc_Serial_No':
+        return data?.serialNo;
+      case 'CDA_Serial_No':
+        return data?.cdaSerialNo;
+      case 'Address':
+        return data?.address;
+      case 'Street':
+        return data?.street;
+      case 'Sector':
+        return data?.sector;
+      case 'Plot_No':
+        return data?.plot;
+      case 'Owner_Name':
+        return `${data?.fullName} ${data?.fatherName}`;
+      case 'videOrderDate':
+        return moment(data?.videOrderDate).subtract(10, 'days').calendar()
+      default:
+        return data[field];
+    }
   };
 
   const offset = currentPage * itemsPerPage;
   const currentItems = getTableData?.slice(offset, offset + itemsPerPage).map((t, i) => {
     return (
-      <tr>
-        <td>{t?.referenceNo}</td>
-        <td>{t?.serialNo}</td>
-        <td>{t?.cdaSerialNo}</td>
-        <td>{t?.address}</td>
-        <td>{t?.street}</td>
-        <td>{t?.sector}</td>
-        <td>{t?.plot}</td>
-        <td>{t?.fullName} {t?.fatherName}</td>
-        <td style={{ color: "#5454d8", textAlign: "center", cursor: "pointer" }}> <input
-          type="file"
-          id="fileInput"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        /> <MdOutlineFileUpload onClick={handleIconClick} /></td>
+      <tr key={t?.id}>
+        {Object.keys(showingFields).map((field) => (
+          showingFields[field] && (
+            <td key={field} style={getCellStyles(field)}>
+              {getFieldValue(t, field)}
+            </td>
+          )
+        ))}
         <td className='text-center'>
-          <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
-          <span> <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
-            <MdOutlineFileDownload /> </a> </span>
+          <span style={{ color: "#299205", marginRight: "5px" }}>
+            <MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} />
+          </span>
+          <span>
+            <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
+              <MdOutlineFileDownload />
+            </a>
+          </span>
         </td>
-        <td><span className='table_dots' onClick={() => handleShowCrudToggle(i)}> <HiOutlineDotsVertical />
-          {
-            showCrudList[i] &&
-            <div>
-              <ul>
-                <li>Edit</li>
-                <li>Delete</li>
-              </ul>
-            </div>
-          }
-        </span></td>
+        <td style={{ color: "#5454d8", textAlign: "center", cursor: "pointer", paddingRight: "15px" }}>
+          {t.signOffDocument === 'no' ? (
+            <span>
+              <input
+                type="file"
+                id="fileInput"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+              <MdOutlineFileUpload onClick={() => handleIconClick(t?.id)} />
+            </span>
+          ) : (
+            <span>
+              <a style={{ textDecoration: "none" }} href={t.signOffDocument ? t.signOffDocument : null} target='_blank'>
+                <MdOutlineFileDownload style={{ color: "red" }} />
+              </a>
+            </span>
+          )}
+        </td>
       </tr>
-    )
+    );
   });
 
   const pageDecrease = () => {
@@ -174,8 +244,81 @@ const TableView = () => {
     }
   }
 
+  const uploadHandler = () => {
+    const currentUser = getCurrentUser();
+    const formData = new FormData();
+    formData.append("token", currentUser?.token)
+    formData.append("email", currentUser?.email)
+    formData.append("documentId", getIndvId)
+    formData.append("signOff", file)
+
+    dispatch(ApplicationUpload(formData))
+  }
+
+  const modal = <Modal show={showConfirm} centered className='logout_modal'>
+    <Modal.Body>
+      <h3>Are you sure you want to Upload the File?</h3>
+      <div className='d-flex justify-content-center' style={{ gap: "20px" }}>
+        <button onClick={uploadHandler}> {uploadLoading ? <Spinner animation="border" size="sm" /> : 'Yes'}</button>
+        <button className='no_btn' onClick={() => {
+          setGetIndvId('')
+          setFile(null)
+          setShowConfirm(false)
+        }}>No</button>
+      </div>
+    </Modal.Body>
+  </Modal>
+
+  const getColumnWidth = (field) => {
+    switch (field) {
+      case "Ref_No":
+        return "100px";
+      case "Address":
+        return "120px";
+      case "Street":
+        return "80px";
+      case "Owner_Name":
+        return "100px";
+      default:
+        return "auto";
+    }
+  };
+
+  const getPaddingLeft = (field) => {
+    switch (field) {
+      case "Ref_No":
+        return "15px";
+      default:
+        return "5px";
+    }
+  };
+
+  const getFieldLabel = (field) => {
+    switch (field) {
+      case "Ref_No":
+        return "Ref. No.";
+      case "Doc_Serial_No":
+        return "Doc. Serial No.";
+      case "CDA_Serial_No":
+        return "CDA Serial No.";
+      case "Address":
+        return "Address";
+      case "Street":
+        return "Street";
+      case "Sector":
+        return "Sector";
+      case "Plot_No":
+        return "Plot No";
+      case "Owner_Name":
+        return "Owner Name";
+      default:
+        return field;
+    }
+  };
+
   return (
     <div className='table_main'>
+      {modal}
       <Announcement />
 
       <div className='application_main'>
@@ -223,61 +366,35 @@ const TableView = () => {
                 </div>
               }
             </div>
-            {/* <div className='filteration'>
-              <p onClick={() => setShowFilter(!showFilter)}>Filter</p>
-              <svg onClick={() => setShowFilter(!showFilter)} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <mask id="mask0_351_738" style={{ maskType: "alpha" }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                  <rect width="24" height="24" fill="#D9D9D9" />
-                </mask>
-                <g mask="url(#mask0_351_738)">
-                  <path d="M11 20C10.7167 20 10.4792 19.9042 10.2875 19.7125C10.0959 19.5208 10 19.2833 10 19V13L4.20002 5.6C3.95002 5.26667 3.91252 4.91667 4.08752 4.55C4.26252 4.18333 4.56669 4 5.00002 4H19C19.4334 4 19.7375 4.18333 19.9125 4.55C20.0875 4.91667 20.05 5.26667 19.8 5.6L14 13V19C14 19.2833 13.9042 19.5208 13.7125 19.7125C13.5209 19.9042 13.2834 20 13 20H11ZM12 12.3L16.95 6H7.05002L12 12.3Z" fill="#787878" />
-                </g>
-              </svg>
+
+            <div className='filteration'>
+              <p onClick={() => setShowColumns(!showColumns)} style={{ width: "80px" }}>Columns</p>
+              <FiColumns onClick={() => setShowColumns(!showColumns)} />
 
               {
-                showFilter &&
+                showColumns &&
                 <div className='filter_checkboxes'>
                   <div key={`inline-checkbox`}>
-                    <Form.Check
-                      inline
-                      label="Reference No."
-                      name="group1"
-                      type={'checkbox'}
-                    />
-                    <Form.Check
-                      inline
-                      label="Full Name"
-                      name="group1"
-                      type={'checkbox'}
-                    />
-                    <Form.Check
-                      inline
-                      label="Serial No."
-                      name="group1"
-                      type={'checkbox'}
-                    />
-                    <Form.Check
-                      inline
-                      label="CDA Serial No."
-                      name="group1"
-                      type={'checkbox'}
-                    />
-                    <Form.Check
-                      inline
-                      label="Date"
-                      name="group1"
-                      type={'checkbox'}
-                    />
-                    <Form.Check
-                      inline
-                      label="Vide Order Date"
-                      name="group1"
-                      type={'checkbox'}
-                    />
+                    {Object.keys(showingFields).map((field) => (
+                      <Form.Check
+                        key={field}
+                        inline
+                        label={field}
+                        checked={showingFields[field]}
+                        onChange={(e) =>
+                          setShowingFields((prevFields) => ({
+                            ...prevFields,
+                            [field]: e.target.checked
+                          }))
+                        }
+                        name="group1"
+                        type={'checkbox'}
+                      />
+                    ))}
                   </div>
                 </div>
               }
-            </div> */}
+            </div>
           </div>
         </div>
 
@@ -289,37 +406,42 @@ const TableView = () => {
               <Table responsive>
                 <thead>
                   <tr>
-                    <th style={{ width: "100px" }}>Ref No.</th>
-                    <th>Doc. Serial No.</th>
-                    <th>CDA Serial No.</th>
-                    <th style={{ width: "130px" }}>Address</th>
-                    <th style={{ width: "80px" }}>Street</th>
-                    <th>Sector</th>
-                    <th>Plot No.</th>
-                    <th style={{ width: "120px" }}>Owner Name</th>
-                    <th>Upload</th>
+                    {Object.keys(showingFields).map((field) => (
+                      showingFields[field] && (
+                        <th key={field} style={{ width: getColumnWidth(field), paddingLeft: getPaddingLeft(field) }}>
+                          {getFieldLabel(field)}
+                        </th>
+                      )
+                    ))}
                     <th className='text-center'>View Download</th>
+                    <th className='text-center' style={{ paddingRight: "15px", width: "80px" }}>SignOff Upload / Download</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {currentItems}
-                </tbody>
+                {
+                  getTableData?.length > 0 &&
+                  <tbody>
+                    {currentItems}
+                  </tbody>
+                }
               </Table>
+              {getTableData?.length === 0 && <p className='text-center' style={{ fontWeight: "600" }}>No Data Found</p>}
 
-              <ReactPaginate
-                previousLabel={'Previous'}
-                nextLabel={'Next'}
-                breakLabel={'...'}
-                pageCount={Math.ceil(getTableData?.length / itemsPerPage)}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                onPageChange={({ selected }) => setCurrentPage(selected)}
-                containerClassName={'pagination'}
-                activeClassName={'active'}
-              />
+              {
+                getTableData?.length > 0 &&
+                <ReactPaginate
+                  previousLabel={'Previous'}
+                  nextLabel={'Next'}
+                  breakLabel={'...'}
+                  pageCount={Math.ceil(getTableData?.length / itemsPerPage)}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={5}
+                  onPageChange={({ selected }) => setCurrentPage(selected)}
+                  containerClassName={'pagination'}
+                  activeClassName={'active'}
+                />
+              }
             </div>
         }
-
         {
           showPdf && <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
             <div className='preview_show_data'>
@@ -340,5 +462,4 @@ const TableView = () => {
     </div>
   )
 }
-
 export default TableView

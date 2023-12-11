@@ -42,6 +42,7 @@ function MobileSidebar({ navbarRef, NavHandler, sideBarItems }) {
                 {sideBarItems?.map((item, index) => {
                     return (
                         <Link
+                            key={item.path}
                             to={item.path}
                             className={pathname === item.path ? "nav-active" : "nav-link"}
                         >

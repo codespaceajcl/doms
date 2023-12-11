@@ -1,6 +1,4 @@
 import axios from "axios";
-import { getCurrentUser } from "../../Utils/Helper";
-// import api from "../../Utils/Interceptor";
 
 export const FormCreate = (formData) => async (dispatch) => {
     try {
@@ -94,23 +92,23 @@ export const dashboardGet = (formData) => async (dispatch) => {
     }
 };
 
-export const tractPlotGet = (formData) => async (dispatch) => {
+export const ApplicationUpload = (formData) => async (dispatch) => {
     try {
         dispatch({
-            type: "TRACK_PLOT_GET_REQUEST",
+            type: "APPLICATION_UPLOAD_REQUEST",
         });
 
-        const { data } = await axios.post("doms/getTrackPlot/", formData);
+        const { data } = await axios.post("doms/uploadDirectorateOfLandAndRehabilitationSignOff/", formData);
 
         dispatch({
-            type: "TRACK_PLOT_GET_SUCCESS",
+            type: "APPLICATION_UPLOAD_SUCCESS",
             payload: data,
             success: true,
         });
 
     } catch (e) {
         dispatch({
-            type: "TRACK_PLOT_GET_FAILED",
+            type: "APPLICATION_UPLOAD_FAILED",
             payload: e?.response?.data?.message,
             success: false,
         });
