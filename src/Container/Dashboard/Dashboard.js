@@ -8,7 +8,7 @@ import Loader from '../../Utils/Loader';
 import {
   Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend,
 } from 'chart.js';
-import { Doughnut, Bar } from 'react-chartjs-2';
+import { Doughnut, Bar, Line } from 'react-chartjs-2';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdClose } from "react-icons/md";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
@@ -47,7 +47,7 @@ const Dashboard = () => {
     'fullName',
     'serialNo',
   ]);
-  const [showStateData, setShowStateData] = useState([])
+  // const [showStateData, setShowStateData] = useState([])
   const [showCityData, setShowCityData] = useState([])
 
   const { loading, tableGetData } = useSelector((state) => state.getTable)
@@ -141,31 +141,31 @@ const Dashboard = () => {
     },
   };
 
-  const warehouseOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-        position: 'top',
-      },
-      title: {
-        display: false,
-        text: '',
-      },
-    },
-    scales: {
-      x: {
-        grid: {
-          color: '#F7F9FB',
-        }
-      },
-      y: {
-        grid: {
-          color: '#e8e8e8',
-        }
-      },
-    },
-  };
+  // const warehouseOptions = {
+  //   responsive: true,
+  //   plugins: {
+  //     legend: {
+  //       display: false,
+  //       position: 'top',
+  //     },
+  //     title: {
+  //       display: false,
+  //       text: '',
+  //     },
+  //   },
+  //   scales: {
+  //     x: {
+  //       grid: {
+  //         color: '#F7F9FB',
+  //       }
+  //     },
+  //     y: {
+  //       grid: {
+  //         color: '#e8e8e8',
+  //       }
+  //     },
+  //   },
+  // };
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -183,19 +183,19 @@ const Dashboard = () => {
     }
   }
 
-  const stateOptions = dashGetData ? dashGetData?.data?.documentsByState?.reduce((uniqueCountries, c) => {
-    if (!uniqueCountries?.has(c.country)) {
-      uniqueCountries?.add(c?.country);
-      return uniqueCountries;
-    }
-    return uniqueCountries;
-  }, new Set()) : []
+  // const stateOptions = dashGetData ? dashGetData?.data?.documentsByState?.reduce((uniqueCountries, c) => {
+  //   if (!uniqueCountries?.has(c.country)) {
+  //     uniqueCountries?.add(c?.country);
+  //     return uniqueCountries;
+  //   }
+  //   return uniqueCountries;
+  // }, new Set()) : []
 
-  const stateOptionsArray = stateOptions ? Array.from(stateOptions).map(country => ({ value: country, label: country })) : []
+  // const stateOptionsArray = stateOptions ? Array.from(stateOptions).map(country => ({ value: country, label: country })) : []
 
-  const cityOptions = dashGetData ? dashGetData?.data?.documentsByCity?.reduce((uniqueCountries, c) => {
-    if (!uniqueCountries?.has(c.country)) {
-      uniqueCountries?.add(c.country);
+  const cityOptions = dashGetData ? dashGetData?.data?.documentsBySector?.reduce((uniqueCountries, c) => {
+    if (!uniqueCountries?.has(c.city)) {
+      uniqueCountries?.add(c.city);
       return uniqueCountries;
     }
     return uniqueCountries;
@@ -203,23 +203,23 @@ const Dashboard = () => {
 
   const cityOptionsArray = cityOptions ? Array.from(cityOptions).map(country => ({ value: country, label: country })) : []
 
-  const [stateOption, setStateOption] = useState({ value: "Pakistan", label: "Pakistan" })
-  const [cityOption, setCityOption] = useState({ value: "Pakistan", label: "Pakistan" })
+  // const [stateOption, setStateOption] = useState({ value: "Pakistan", label: "Pakistan" })
+  const [cityOption, setCityOption] = useState({ value: "Islamabad", label: "Islamabad" })
 
-  const warehouseData = {
-    labels: showStateData?.map((s) => (s?.state)),
-    datasets: [
-      {
-        label: '',
-        data: showStateData?.map((s) => (s?.count)),
-        backgroundColor: ['#95A4FC', '#BAEDBD', '#1C1C1C', '#B1E3FF', '#A8C5DA', '#A1E3CB'],
-        barThickness: 20,
-      },
-    ],
-  };
+  // const warehouseData = {
+  //   labels: showStateData?.map((s) => (s?.state)),
+  //   datasets: [
+  //     {
+  //       label: '',
+  //       data: showStateData?.map((s) => (s?.count)),
+  //       backgroundColor: ['#95A4FC', '#BAEDBD', '#1C1C1C', '#B1E3FF', '#A8C5DA', '#A1E3CB'],
+  //       barThickness: 20,
+  //     },
+  //   ],
+  // };
 
   const capacityData = {
-    labels: showCityData?.map((s) => (`${s?.city} ${s?.count}`)),
+    labels: showCityData?.map((s) => (`${s?.city}`)),
     datasets: [
       {
         label: '',
@@ -232,19 +232,19 @@ const Dashboard = () => {
 
   useEffect(() => {
 
-    const filteredArrCity = dashGetData ? dashGetData?.data?.documentsByCity?.filter(item => item?.country === cityOption?.value) : []
-    const result = filteredArrCity?.map(item => ({ city: item?.city, count: item?.count }));
+    const filteredArrCity = dashGetData ? dashGetData?.data?.documentsBySector?.filter(item => item?.city === cityOption?.value) : []
+    const result = filteredArrCity?.map(item => ({ city: item?.sector, count: item?.count }));
     setShowCityData(result)
 
   }, [dashGetData, cityOption])
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const filteredArr = dashGetData ? dashGetData?.data?.documentsByState?.filter(item => item?.country === stateOption?.value) : []
-    const result = filteredArr?.map(item => ({ state: item?.state, count: item?.count }));
-    setShowStateData(result)
+  //   const filteredArr = dashGetData ? dashGetData?.data?.documentsByState?.filter(item => item?.country === stateOption?.value) : []
+  //   const result = filteredArr?.map(item => ({ state: item?.state, count: item?.count }));
+  //   setShowStateData(result)
 
-  }, [dashGetData, stateOption])
+  // }, [dashGetData, stateOption])
 
   useEffect(() => {
     const updateTableScrollHeight = () => {
@@ -282,6 +282,35 @@ const Dashboard = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const lineOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false
+      },
+      title: {
+        display: false,
+        text: '',
+      },
+    },
+
+  };
+
+  const labels = dashGetData?.data?.dateWiseTrend.map((t) => t?.date)
+
+  const lineData = {
+    labels,
+    datasets: [
+      {
+        fill: true,
+        label: '',
+        data: dashGetData?.data?.dateWiseTrend.map((d) => d.quantity),
+        borderColor: '#739B21',
+        backgroundColor: '#739b2175',
+      },
+    ],
+  };
 
   return (
     <div>
@@ -401,15 +430,15 @@ const Dashboard = () => {
               <div className='dashboard_chart'>
                 <div style={{ padding: "15px" }}>
                   <div className='show_state_div'>
-                    <h6>Applicantions by State</h6>
-
-                    <Select options={stateOptionsArray} value={stateOption} onChange={(state) => setStateOption(state)} placeholder="Select State" styles={chartStyle} />
+                    <h6>Applications Date Wise</h6>
+                    {/* <Select options={stateOptionsArray} value={stateOption} onChange={(state) => setStateOption(state)} placeholder="Select State" styles={chartStyle} /> */}
                   </div>
 
                   {
                     dashboardLoading ? <div className='py-5'> <Loader /> </div> :
                       <div className='line_chart'>
-                        <Bar options={warehouseOptions} data={warehouseData} />
+                        <Line options={lineOptions} data={lineData} />
+                        {/* <Bar options={warehouseOptions} data={warehouseData} /> */}
                       </div>
                   }
                 </div>
@@ -419,10 +448,8 @@ const Dashboard = () => {
                 <div style={{ padding: "15px" }}>
                   <div className='show_state_div'>
                     <h6>Applications City Wise</h6>
-
                     <Select options={cityOptionsArray} value={cityOption} onChange={(state) => setCityOption(state)} placeholder="Select State" styles={chartStyle} />
                   </div>
-
                   {
                     dashboardLoading ? <div className='py-5'> <Loader /> </div> :
                       <div className='zone_wise'>
@@ -447,7 +474,6 @@ const Dashboard = () => {
             </div>
           </Col>
         </Row>
-
         {
           showPdf && <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
             <div className='preview_show_data'>

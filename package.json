@@ -1,7 +1,7 @@
 {
   "name": "e-service",
   "version": "0.1.0",
-  "homepage": "https://codespaceajcl.github.io/doms",
+  "homepage": "https://crms.ajcl.net/doms",
   "private": false,
   "dependencies": {
     "@emotion/react": "^11.11.1",
