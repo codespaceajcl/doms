@@ -118,7 +118,6 @@ const TrackPlots = () => {
         document.body.removeChild(link);
     };
 
-
     return (
         <div className='table_main'>
             <Announcement />
@@ -144,7 +143,7 @@ const TrackPlots = () => {
                 </div>
 
                 <div className='download_csv'>
-                    <button disabled={getTableData?.length === 0 ? true : false} onClick={downloadCSV}><MdOutlineFileDownload style={{ fontSize: "20px" }} /> Download CSV</button>
+                    <button disabled={getTableData?.length === 0 ? true : false} onClick={downloadCSV}><MdOutlineFileDownload style={{ fontSize: "18px" }} /> Download CSV</button>
                 </div>
 
                 {

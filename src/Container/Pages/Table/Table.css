@@ -26,9 +26,11 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
-.application_main .search_tables .searching, .application_main .search_tables .filteration {
+.application_main .search_tables .searching,
+.application_main .search_tables .filteration {
     border: none;
     border-bottom: 1.5px solid #787878;
     position: relative;
@@ -59,7 +61,7 @@
 } */
 
 .application_table {
-    margin-top: 20px;
+    margin-top: 8px;
 }
 
 .application_table thead tr th {
@@ -69,7 +71,7 @@
     font-weight: 600;
 }
 
-.application_table thead tr th:first-child{
+.application_table thead tr th:first-child {
     padding-left: 15px !important;
 }
 
@@ -79,7 +81,7 @@
     color: #313131;
 }
 
-.application_table tbody tr td:first-child{
+.application_table tbody tr td:first-child {
     padding-left: 15px !important;
 }
 
@@ -183,13 +185,13 @@
     border-bottom: 1px solid lightgray;
 }
 
-.filteration{
+.filteration {
     display: flex;
     align-items: center;
     position: relative;
 }
 
-.filteration p{
+.filteration p {
     margin-bottom: 0;
     width: 50px;
     color: #787878;
@@ -197,7 +199,8 @@
     cursor: pointer;
 }
 
-.searching .filter_checkboxes, .filteration .filter_checkboxes{
+.searching .filter_checkboxes,
+.filteration .filter_checkboxes {
     position: absolute;
     background-color: #fff;
     box-shadow: 0px 10px 20px 0px rgba(194, 194, 194, 0.16), 0px 0px 30px 0px rgba(170, 170, 170, 0.16);
@@ -209,44 +212,47 @@
     padding: 15px 13px;
 }
 
-.searching .filter_checkboxes .form-check-label, .filteration .filter_checkboxes .form-check-label{
+.searching .filter_checkboxes .form-check-label,
+.filteration .filter_checkboxes .form-check-label {
     font-size: 13px;
     font-weight: 500;
 }
 
-.searching .filter_checkboxes .form-check-input, .filteration .filter_checkboxes .form-check-input{
+.searching .filter_checkboxes .form-check-input,
+.filteration .filter_checkboxes .form-check-input {
     width: 15px;
     height: 15px;
 }
 
-.searching .filter_checkboxes .form-check-inline, .filteration .filter_checkboxes .form-check-inline{
+.searching .filter_checkboxes .form-check-inline,
+.filteration .filter_checkboxes .form-check-inline {
     margin-bottom: 5px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.searching .form-check-input:focus{
+.searching .form-check-input:focus {
     box-shadow: none;
 }
 
-.searching svg{
+.searching svg {
     cursor: pointer;
 }
 
 .download_csv {
-    margin-top: 20px;
+    margin-top: 8px;
     margin-right: 15px;
     display: flex;
     justify-content: end;
 }
 
-.download_csv button{
+.download_csv button {
     background-color: #739B21;
     border: none;
     color: #fff;
-    padding: 10px 20px;
-    font-size: 13px;
+    padding: 6px 7px;
+    font-size: 12px;
     border-radius: 7px;
     font-weight: 600;
     display: flex;
@@ -254,19 +260,31 @@
     gap: 3px;
 }
 
-.download_csv button:disabled{
+.download_csv button:disabled {
     background-color: #739b21cf;
 }
 
+.filteration span {
+    display: flex;
+    align-items: center;
+    margin-top: 3px;
+}
+
+@media (max-width: 550px) {
+    .application_main .search_tables div:first-child input.search_no{
+        width: 150px;
+    }
+}
+
 @media (max-width: 468px) {
-    .table_main .application_main .heading{
+    .table_main .application_main .heading {
         flex-direction: column;
         align-items: start;
         gap: 10px;
     }
 
-    .searching .filter_checkboxes{
+    .searching .filter_checkboxes {
         top: 80px;
     }
-    
+
 }

@@ -29,6 +29,7 @@
     background: #F7F9FB;
     box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.16);
     position: relative;
+    margin-top: 30px;
 }
 
 .application_table.recent_table .heading {

@@ -42,3 +42,10 @@ img {
     width: 100%;
   }
 }
+
+@media (max-width: 500px) {
+  .dashboard_div{
+    padding: 15px 15px;
+    padding-top: 100px;
+  }
+}

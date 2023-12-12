@@ -33,6 +33,7 @@ ChartJS.register(
 const Dashboard = () => {
   const dispatch = useDispatch();
   const heightRef = useRef();
+  const buttonRef = useRef(null);
 
   const [showPdf, setShowPdf] = useState(false)
   const [previewPdf, setPreviewPdf] = useState('')
@@ -269,32 +270,44 @@ const Dashboard = () => {
     };
   }, []);
 
+  const handleClickOutside = (event) => {
+    if (buttonRef.current && !buttonRef.current.contains(event.target)) {
+      setShowFilter(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div>
       <Announcement />
 
       <div className='dashboard_main'>
-        <Row style={{ padding: "0 15px" }}>
-          <Col md={3}>
+        <Row style={{ padding: "0 15px", gap: "15px 0" }}>
+          <Col md={3} sm={6} xs={6}>
             <div className='dashboard_boxes'>
               <h6>Total <br /> Applications</h6>
               <h5>{loading ? 0 : dashGetData?.data?.totalApplications}</h5>
             </div>
           </Col>
-          <Col md={3}>
+          <Col md={3} sm={6} xs={6}>
             <div className='dashboard_boxes'>
               <h6>Applicants This <br /> Month</h6>
               <h5>{loading ? 0 : dashGetData?.data?.applicationsThisMonth}</h5>
             </div>
           </Col>
-          <Col md={3}>
+          <Col md={3} sm={6} xs={6}>
             <div className='dashboard_boxes'>
               <h6>Total No. of <br /> Sectors</h6>
               <h5>{loading ? 0 : dashGetData?.data?.totalSectors}</h5>
             </div>
           </Col>
-          <Col md={3}>
+          <Col md={3} sm={6} xs={6}>
             <div className='dashboard_boxes'>
               <h6>Total No. of <br /> Plots</h6>
               <h5>{loading ? 0 : dashGetData?.data?.totalPlots}</h5>
@@ -317,7 +330,7 @@ const Dashboard = () => {
                       name="searchNo"
                       onChange={searchHandler}
                     />
-                    <svg onClick={() => setShowFilter(!showFilter)} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <svg ref={buttonRef} onClick={() => setShowFilter(!showFilter)} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <mask id="mask0_351_738" style={{ maskType: "alpha", cursor: "pointer" }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
                         <rect width="24" height="24" fill="#D9D9D9" />
                       </mask>
