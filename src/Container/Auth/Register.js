@@ -16,6 +16,7 @@ const Register = () => {
     const [designation, setDesignation] = useState('')
     const [contact, setContact] = useState('')
     const [cnic, setCnic] = useState('')
+    const [access, setAccess] = useState('')
     const [address, setAddress] = useState('')
     const [secretKey, setSecretKey] = useState('')
     const userFound = JSON.parse(localStorage.getItem("user"))
@@ -24,7 +25,9 @@ const Register = () => {
 
     useEffect(() => {
         if (userFound) {
-            navigate('/dashboard')
+            if (userFound?.access === 'admin') navigate('/dashboard/application')
+            if (userFound?.access === 'masterAdmin') navigate('/dashboard')
+            if (userFound?.access === 'user') navigate('/dashboard/registration')
         }
     }, [])
 
@@ -47,8 +50,13 @@ const Register = () => {
     const loginHandler = (e) => {
         e.preventDefault();
         if (name.length === 0 || email.length === 0 || password.length === 0 || designation.length === 0
-            || contact.length === 0 || cnic.length === 0 || address.length === 0 || secretKey.length === 0) {
+            || contact.length === 0 || cnic.length === 0 || address.length === 0 || secretKey.length === 0 || access.length === 0) {
             errorNotify('fill out both fields')
+            return
+        }
+
+        if(access !== 'admin' || access !== 'user' || access !== 'masterAdmin'){
+            errorNotify("Access must be only Admin, User, MasterAdmin")
             return
         }
 
@@ -57,7 +65,7 @@ const Register = () => {
         formData.append("email", email)
         formData.append("password", password)
         formData.append("designation", designation)
-        formData.append("access", 'admin')
+        formData.append("access", access)
         formData.append("contact", contact)
         formData.append("cnic", cnic)
         formData.append("address", address)
@@ -123,14 +131,20 @@ const Register = () => {
                                     </Col>
                                     <Col md={6}>
                                         <Form.Group className="mb-3" controlId="formBasicPassword">
-                                            <Form.Label>Address</Form.Label>
-                                            <Form.Control type="text" placeholder="Enter Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+                                            <Form.Label>Access</Form.Label>
+                                            <Form.Control type="text" placeholder="Enter Access" value={access} onChange={(e) => setAccess(e.target.value)} />
                                         </Form.Group>
                                     </Col>
                                     <Col md={6}>
                                         <Form.Group className="mb-3" controlId="formBasicPassword">
                                             <Form.Label>Secret Key</Form.Label>
                                             <Form.Control type="password" placeholder="Enter Secret Key" value={secretKey} onChange={(e) => setSecretKey(e.target.value)} />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col md={12}>
+                                        <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Label>Address</Form.Label>
+                                            <Form.Control type="text" placeholder="Enter Address" value={address} onChange={(e) => setAddress(e.target.value)} />
                                         </Form.Group>
                                     </Col>
                                 </Row>

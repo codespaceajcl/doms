@@ -297,15 +297,15 @@ const Dashboard = () => {
 
   };
 
-  const labels = dashGetData?.data?.dateWiseTrend.map((t) => t?.date)
+  const labels = dashGetData?.data?.dateWiseTrend?.sort((a, b) => a.date - b.date)?.map((t) => t?.date)
 
   const lineData = {
-    labels,
+    labels: labels,
     datasets: [
       {
         fill: true,
         label: '',
-        data: dashGetData?.data?.dateWiseTrend.map((d) => d.quantity),
+        data: dashGetData?.data?.dateWiseTrend?.sort((a, b) => a.date - b.date)?.map((d) => d.quantity),
         borderColor: '#739B21',
         backgroundColor: '#739b2175',
       },
@@ -351,7 +351,7 @@ const Dashboard = () => {
                 <h6>Recent Uploads</h6>
 
                 <div className='search_tables'>
-                  <div className='searching'>
+                  <div className='searching' ref={buttonRef}>
                     <input
                       className='recent_search'
                       placeholder='Search'
@@ -359,7 +359,7 @@ const Dashboard = () => {
                       name="searchNo"
                       onChange={searchHandler}
                     />
-                    <svg ref={buttonRef} onClick={() => setShowFilter(!showFilter)} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <svg onClick={() => setShowFilter(!showFilter)} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <mask id="mask0_351_738" style={{ maskType: "alpha", cursor: "pointer" }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
                         <rect width="24" height="24" fill="#D9D9D9" />
                       </mask>

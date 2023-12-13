@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { dashboardSidebar } from '../../Container/Dashboard/Routes/Routes';
 import { successNotify } from '../../Utils/Toast';
 import './Sidebar.css';
 import { Modal } from 'react-bootstrap';
 
-const Sidebar = () => {
+const Sidebar = ({ dashboardSidebar }) => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const [show, setShow] = useState(false)

@@ -164,15 +164,15 @@
 
 .registration_form .content .form-control::-webkit-outer-spin-button,
 .registration_form .content .form-control::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .registration_form .content .form-control[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
-.registration_form .content .form-control:focus{
+.registration_form .content .form-control:focus {
     box-shadow: none;
     border: 1px solid #739B21;
 }
@@ -206,7 +206,7 @@
     color: #787878;
 }
 
-.registration_form .edit_profile_img .edit_profile_btn{
+.registration_form .edit_profile_img .edit_profile_btn {
     border: 1px solid #CFCFCF;
     background: #E6E6E6;
     padding: 4px 20px;
@@ -221,13 +221,13 @@
     cursor: pointer;
 }
 
-.registration_form .edit_profile_img{
+.registration_form .edit_profile_img {
     border: 1px solid #D9D9D9;
     width: fit-content;
     margin-left: auto;
 }
 
-.registration_form .edit_profile_img img{
+.registration_form .edit_profile_img img {
     padding: 6px;
     width: 100%;
     height: 140px;
@@ -238,11 +238,11 @@
     margin: auto;
 }
 
-.form_main .tab_show{
+.form_main .tab_show {
     position: relative;
 }
 
-.preview_show{
+.preview_show {
     position: absolute;
     top: 0;
     display: flex;
@@ -255,13 +255,13 @@
     overflow: hidden;
 }
 
-.preview_show .preview_show_data{
+.preview_show .preview_show_data {
     max-width: 400px;
     position: relative;
     min-width: 400px;
 }
 
-.preview_show .preview_show_data .close_icon{
+.preview_show .preview_show_data .close_icon {
     color: #fff;
     position: absolute;
     right: -20px;
@@ -277,7 +277,7 @@
     padding: 0 0;
 }
 
-.preview_show .preview_btn button{
+.preview_show .preview_btn button {
     width: 25%;
     background-color: #0094FF;
     color: #fff;
@@ -288,11 +288,11 @@
     border-radius: 10px;
 }
 
-.preview_show .preview_btn button.discard{
+.preview_show .preview_btn button.discard {
     background-color: #FF5858;
 }
 
-.registration_form .success_msg{
+.registration_form .success_msg {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -300,25 +300,25 @@
     height: 70vh;
 }
 
-.registration_form .success_msg h5{
+.registration_form .success_msg h5 {
     text-align: center;
     margin-bottom: 0;
     color: #787878;
     font-size: 17px;
 }
 
-.registration_form .success_msg h3{
+.registration_form .success_msg h3 {
     font-weight: 700;
     margin-bottom: 0;
     text-align: center;
 }
 
-.registration_form .success_btn{
+.registration_form .success_btn {
     display: flex;
     gap: 10px;
 }
 
-.registration_form .success_btn button{
+.registration_form .success_btn button {
     background-color: #739B21;
     border: none;
     color: #fff;
@@ -339,44 +339,44 @@
     height: 500px !important;
 }
 
-.react-pdf__Page__textContent{
+.react-pdf__Page__textContent {
     width: 100% !important;
     height: 500px !important;
 }
 
-.pdf_chevron{
+.pdf_chevron {
     display: flex;
     justify-content: end;
     gap: 8px;
     /* margin: 7px 0; */
 }
 
-.pdf_chevron svg{
+.pdf_chevron svg {
     color: #fff;
     font-size: 22px;
     cursor: pointer;
 }
 
-.react-pdf__message--error{
+.react-pdf__message--error {
     text-align: center;
     background-color: #fff;
     padding: 20px 10px;
     font-weight: 600;
 }
 
-.pdf_chevron svg:first-child{
+.pdf_chevron svg:first-child {
     position: absolute;
     left: -6%;
     top: 40%;
 }
 
-.pdf_chevron svg:last-child{
+.pdf_chevron svg:last-child {
     position: absolute;
     top: 40%;
     right: -6%;
 }
 
-.print_doc{
+.print_doc {
     margin-top: 20px;
     background-color: #739B21;
     color: #fff;
@@ -388,34 +388,76 @@
     min-width: 250px;
 }
 
+.attachment_doc {
+    display: flex;
+    align-items: center;
+    border: 1px solid #787878;
+    border-radius: 7px;
+}
+
+.attachment_doc input {
+    border: none !important;
+}
+
+.attachment_doc span{
+    font-size: 13px;
+    width: 120px;
+    border-left: 1px solid #787878;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    cursor: pointer;
+    background-color: #739B21;
+    color: #fff;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    font-weight: 600;
+}
+
+.preview_img_file{
+    position: relative !important;
+    bottom: 10px !important;
+    text-align: end !important;
+    display: flex !important;
+    justify-content: end !important;
+    margin-bottom: 10px !important;
+    cursor: pointer !important;
+    color: #000 !important;
+}
+
+.preview_img_file a{
+    color: #000 !important;
+}
+
 @media (max-width: 1050px) {
-    .announcement_div button{
+    .announcement_div button {
         font-size: 13px;
         padding: 3px 5px;
     }
 
-    .announcement_div p{
+    .announcement_div p {
         font-size: 14px;
     }
 }
 
 @media (max-width: 785px) {
-    .announcement_div{
+    .announcement_div {
         flex-wrap: wrap;
     }
 }
 
 @media (max-width: 767px) {
-    .content .make_reverse{
+    .content .make_reverse {
         flex-direction: column-reverse;
     }
 
-    .registration_form .heading{
+    .registration_form .heading {
         flex-wrap: wrap;
         gap: 5px 0;
     }
 
-    .form_main .registration_form .heading div{
+    .form_main .registration_form .heading div {
         flex-wrap: wrap;
     }
 }

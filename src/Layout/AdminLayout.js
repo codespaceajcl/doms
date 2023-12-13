@@ -9,7 +9,7 @@ import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { MdOutlineShareLocation } from "react-icons/md";
 
-const UserLayout = () => {
+const AdminLayout = () => {
     const userFound = JSON.parse(localStorage.getItem("user"))
 
     const dashboardSidebar = [
@@ -17,6 +17,11 @@ const UserLayout = () => {
             path: "/dashboard/registration",
             icon: <MdOutlinePersonAddAlt />,
             title: "Registration",
+        },
+        {
+            path: "/dashboard/application",
+            icon: <MdOutlineGridView />,
+            title: "View Applications",
         },
         {
             path: "",
@@ -27,7 +32,7 @@ const UserLayout = () => {
     return (
         <div>
             {
-                userFound && userFound.access === 'user' ? <>
+                userFound && userFound.access === 'admin' ? <>
                     <Header />
 
                     <div className="dashboard_div">
@@ -43,4 +48,4 @@ const UserLayout = () => {
         </div>
     );
 };
-export default UserLayout;
+export default AdminLayout;

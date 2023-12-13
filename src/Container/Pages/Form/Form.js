@@ -24,6 +24,7 @@ const RegistrationForm = () => {
   const dispatch = useDispatch();
   const currentUser = JSON.parse(localStorage.getItem("user"))
   const fileInputRef = useRef(null);
+  const docInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [previewPdf, setPreviewPdf] = useState('')
@@ -33,6 +34,10 @@ const RegistrationForm = () => {
   const [printLink, setPrintLink] = useState('')
   const [printLoader, setPrintLoader] = useState(false)
   const [showPrintOnce, setShowPrintOnce] = useState(false);
+  const [no_attachment, setNo_attachment] = useState(null);
+  const [attachments, setAttachments] = useState([]);
+  const [attachmentData, setAttachmentData] = useState([]);
+  const [attachmentDataPreview, setAttachmentDataPreview] = useState([]);
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -123,6 +128,7 @@ const RegistrationForm = () => {
   const [stateOption, setStateOption] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
   const [cityOption, setCityOption] = useState([]);
+  const [fileIndex, setFileIndex] = useState(null)
 
   const handleStateChange = (selectedState) => {
     setStateOption(selectedState);
@@ -151,6 +157,11 @@ const RegistrationForm = () => {
     fileInputRef.current.click();
   };
 
+  const handleDocClick = (i) => {
+    docInputRef.current.click();
+    setFileIndex(i)
+  };
+
   const formFieldHandler = (e) => {
     const { name, value } = e.target;
 
@@ -162,8 +173,14 @@ const RegistrationForm = () => {
 
   const previewHandler = () => {
 
+    // console.log(attachmentData)
+
+    const isAttachmentDataValid = attachmentData.every((attachment) => {
+      return attachment.attachmentDescription && attachment.attachmentDocument;
+    });
+
     const isAnyFieldEmpty = Object.values(formField).some(value => value === "");
-    if (isAnyFieldEmpty || !profileImage || stateOption.length === 0 || cityOption.length === 0) {
+    if (!isAttachmentDataValid || isAnyFieldEmpty || !profileImage || stateOption.length === 0 || cityOption.length === 0) {
       errorNotify("Please Filled up all fields");
       return;
     }
@@ -179,6 +196,8 @@ const RegistrationForm = () => {
     registerData.append("country", countryOption.value)
     registerData.append("state", stateOption.value)
     registerData.append("city", cityOption.value)
+    registerData.append("no_attachment", no_attachment)
+    registerData.append("attachments", attachmentData)
     registerData.append("token", currentUser.token)
     registerData.append("email", currentUser.email)
 
@@ -231,6 +250,50 @@ const RegistrationForm = () => {
       setShowPrintOnce(true);
     }, 5000)
   }
+
+  const handleNoAttachmentsChange = (e) => {
+    const value = parseInt(e.target.value);
+    setNo_attachment(value);
+    setAttachments(Array.from({ length: value }, (_, index) => index));
+    setAttachmentData(Array.from({ length: value }, (_, index) => ({
+      attachmentDocument: null,
+      attachmentDescription: ''
+    })));
+    setAttachmentDataPreview(Array.from({ length: value }, (_, index) => ({
+      attachmentDocument: null,
+      attachmentpreview: null
+    })))
+  };
+
+  const handleAttachmentTextChange = (index, field, value) => {
+    setAttachmentData((prevData) => {
+      const updatedData = [...prevData];
+      updatedData[index][field] = value;
+      return updatedData;
+    });
+  };
+
+  const handleAttachmentFileChange = (index, field, file) => {
+    const allowedFileTypes = ['png', 'jpg', 'jpeg', 'pdf'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedFileTypes.includes(fileExtension)) {
+      errorNotify("Invalid file type. Only png, jpg, jpeg, and pdf are allowed.");
+      return;
+    }
+    setAttachmentData((prevData) => {
+      const updatedData = [...prevData];
+      updatedData[fileIndex][field] = file;
+      return updatedData;
+    });
+
+    setAttachmentDataPreview((prevData) => {
+      const updatedData = [...prevData];
+      updatedData[fileIndex][field] = file.name;
+      updatedData[fileIndex]['attachmentpreview'] = URL.createObjectURL(file);
+      return updatedData;
+    });
+  };
 
   return (
     <div className='form_main'>
@@ -430,6 +493,39 @@ const RegistrationForm = () => {
                       name="plotSize" value={formField.plotSize} onChange={formFieldHandler} />
                   </Form.Group>
                 </Col>
+                <Col md={4}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>No of Attachments</Form.Label>
+                    <Form.Control type="Number" placeholder="Enter No. of Attachments"
+                      value={no_attachment} onChange={handleNoAttachmentsChange}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                {
+                  attachments.map((index) => (
+                    <Col md={6} key={index}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>{`Attachment ${index + 1} Description & Document`}</Form.Label>
+                        <div className='attachment_doc'>
+                          <Form.Control type="text" placeholder={`Enter Attachment ${index + 1} Description`}
+                            onChange={(e) => handleAttachmentTextChange(index, 'attachmentDescription', e.target.value)} />
+                          <span onClick={() => handleDocClick(index)}>
+                            Choose File
+                            <input ref={docInputRef} type="file"
+                              onChange={(e) => handleAttachmentFileChange(index, 'attachmentDocument', e.target.files[0])}
+                              style={{ display: "none" }} />
+                          </span>
+                        </div>
+                      </Form.Group>
+
+                      {attachmentDataPreview && attachmentDataPreview[index]?.attachmentDocument ?
+                        <p className='preview_img_file'>
+                          <a target='_blank' href={attachmentDataPreview[index]?.attachmentpreview}>
+                            {attachmentDataPreview[index]?.attachmentDocument} </a> </p> : null}
+                    </Col>
+                  ))}
                 <Col md={12}>
                   <div className='next_btn'>
                     <button onClick={previewHandler} disabled={loading}> Next </button>
@@ -491,7 +587,11 @@ const RegistrationForm = () => {
               </div>
 
               <div className='success_btn'>
-                <button onClick={() => navigate('/dashboard')}>Go To Dashboard</button>
+                {
+                  currentUser?.access === 'masterAdmin' ?
+                    <button onClick={() => navigate('/dashboard')}>Go To Dashboard</button> :
+                    <button onClick={() => setTab('registration')}>Fill again</button>
+                }
                 <button className='discard' onClick={() => setTab('registration')}>Back</button>
               </div>
             </div>

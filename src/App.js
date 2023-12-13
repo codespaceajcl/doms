@@ -9,8 +9,14 @@ import { ToastContainer } from "react-toastify";
 import NotFound from './Container/Pages/NotFound/NotFound';
 import Register from './Container/Auth/Register';
 import TrackPlot from './Container/Pages/TrackPlots/TrackPlot';
+import AdminLayout from './Layout/AdminLayout';
+import MasterAdminLayout from './Layout/MasterAdminLayout';
+import { useSelector } from 'react-redux';
 
 const App = () => {
+  const { getLoginData } = useSelector((state) => state.loginData)
+  const userFound = JSON.parse(localStorage.getItem("user"));
+
   return (
     <BrowserRouter basename="/doms">
       <ToastContainer
@@ -25,12 +31,27 @@ const App = () => {
         pauseOnHover
         theme="light" />
       <Routes>
-        <Route path={"/dashboard"} element={<UserLayout />}>
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/dashboard/registration' element={<Form />} />
-          <Route path='/dashboard/application' element={<Table />} />
-          <Route path='/dashboard/track-plots' element={<TrackPlot />} />
-        </Route>
+        {(userFound || getLoginData) && (
+          <Route
+            path="/dashboard"
+            element={
+              userFound.access === "user" || getLoginData?.access === "user" ? (
+                <UserLayout />
+              ) : userFound.access === "admin" || getLoginData?.access === "admin" ? (
+                <AdminLayout />
+              ) : userFound.access === "masterAdmin" || getLoginData?.access === "masterAdmin" ? (
+                <MasterAdminLayout />
+              ) : (
+                <NotFound />
+              )
+            }
+          >
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/registration" element={<Form />} />
+            <Route path="/dashboard/application" element={<Table />} />
+            <Route path="/dashboard/track-plots" element={<TrackPlot />} />
+          </Route>
+        )}
 
         <Route path="/" element={<Login />} />
         <Route path="/admin/register" element={<Register />} />

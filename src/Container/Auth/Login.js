@@ -20,7 +20,9 @@ const Login = () => {
 
     useEffect(() => {
         if (userFound) {
-            navigate('/dashboard')
+            if(userFound?.access === 'admin') navigate('/dashboard/application')
+            if(userFound?.access === 'masterAdmin') navigate('/dashboard')
+            if(userFound?.access === 'user') navigate('/dashboard/registration')
         }
     }, [])
 
@@ -28,7 +30,9 @@ const Login = () => {
         if (getLoginData) {
             successNotify("Login Successfully!")
             dispatch({ type: "LOGIN_RESET" })
-            navigate('/dashboard')
+            if(getLoginData?.access === 'admin') navigate('/dashboard/application')
+            if(getLoginData?.access === 'masterAdmin') navigate('/dashboard')
+            if(getLoginData?.access === 'user') navigate('/dashboard/registration')
         }
         else if (error) {
             errorNotify(error)
