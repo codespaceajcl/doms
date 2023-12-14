@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdOutlineFileUpload } from "react-icons/md";
+import { MdOutlineRemoveRedEye, MdOutlineFileDownload } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux';
 import { applicationGet } from '../../../Redux/Action/Dashboard';
 import Loader from '../../../Utils/Loader';

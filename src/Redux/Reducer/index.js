@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import { LoginReducer, RegisterReducer } from "./auth";
 import { ApplicationUploadReducer, applicationGetReducer, dashboardGetReducer, 
-    formCreateReducer, formSaveReducer } from "./Dashboard";
+    formCreateReducer, formSaveReducer, getDocumentLinkReducer } from "./Dashboard";
 
 const rootReducer = combineReducers({
 
@@ -18,7 +18,9 @@ const rootReducer = combineReducers({
 
     //DASHBOARD
     getDashboard: dashboardGetReducer,
-    postApplicationUpload: ApplicationUploadReducer
+    postApplicationUpload: ApplicationUploadReducer,
+
+    postDocumentLink: getDocumentLinkReducer
 
 })
 

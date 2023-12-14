@@ -114,3 +114,27 @@ export const ApplicationUpload = (formData) => async (dispatch) => {
         });
     }
 };
+
+
+export const getDocumentLink = (formData) => async (dispatch) => {
+    try {
+        dispatch({
+            type: "DOCUMENT_LINK_REQUEST",
+        });
+
+        const { data } = await axios.post("doms/printDocument/", formData);
+
+        dispatch({
+            type: "DOCUMENT_LINK_SUCCESS",
+            payload: data,
+            success: true,
+        });
+
+    } catch (e) {
+        dispatch({
+            type: "DOCUMENT_LINK_FAILED",
+            payload: e?.response?.data?.message,
+            success: false,
+        });
+    }
+};

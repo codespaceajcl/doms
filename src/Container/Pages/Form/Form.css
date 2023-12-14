@@ -389,8 +389,8 @@
 }
 
 .attachment_doc {
-    display: flex;
-    align-items: center;
+    /* display: flex; */
+    /* align-items: center; */
     border: 1px solid #787878;
     border-radius: 7px;
 }
@@ -399,9 +399,17 @@
     border: none !important;
 }
 
-.attachment_doc span{
+.attachment_doc textarea{
+    border: none !important;
+}
+
+.attachment_doc textarea::-webkit-resizer {
+    display: none;
+}
+
+.attachment_doc .choose_file{
     font-size: 13px;
-    width: 120px;
+    /* width: 120px; */
     border-left: 1px solid #787878;
     display: flex;
     align-items: center;
@@ -413,6 +421,7 @@
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
     font-weight: 600;
+    height: 100%;
 }
 
 .preview_img_file{

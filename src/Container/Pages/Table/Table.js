@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Table.css';
 import Table from 'react-bootstrap/Table';
-import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdOutlineFileUpload } from "react-icons/md";
+import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdOutlineFileUpload, MdPrint } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux';
-import { ApplicationUpload, applicationGet } from '../../../Redux/Action/Dashboard';
+import { ApplicationUpload, applicationGet, getDocumentLink } from '../../../Redux/Action/Dashboard';
 import Loader from '../../../Utils/Loader';
-import { getCurrentUser } from '../../../Utils/Helper';
+import { dashboardColorStyles, getCurrentUser } from '../../../Utils/Helper';
 import { pdfjs } from 'react-pdf';
 import { MdClose } from "react-icons/md";
 import { Document, Page } from 'react-pdf';
@@ -13,10 +13,13 @@ import { FaChevronRight } from "react-icons/fa";
 import { FaChevronLeft } from "react-icons/fa";
 import ReactPaginate from 'react-paginate';
 import Announcement from '../../../Components/Announcement/Announcement';
-import { Form, Modal, Spinner } from 'react-bootstrap';
-import { successNotify } from '../../../Utils/Toast';
+import { Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
+import { errorNotify, successNotify } from '../../../Utils/Toast';
 import { FiColumns } from "react-icons/fi";
 import moment from 'moment';
+import { IoMdClose } from "react-icons/io";
+import Select from "react-select";
+import printJS from 'print-js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -58,6 +61,11 @@ const TableView = () => {
     plotSize: false,
     videOrderDate: false
   });
+  const [viewAttachments, setViewAttachments] = useState(false)
+  const [viewPrint, setViewPrint] = useState(false)
+  const [getModalData, setGetModalData] = useState({})
+
+  // console.log(getModalData)
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -190,10 +198,22 @@ const TableView = () => {
     }
   };
 
+  const modalHandler = (getData) => {
+    setGetModalData(getData)
+    setViewAttachments(true)
+  }
+
+  const printModalHandler = (getData) => {
+    setGetModalData(getData)
+    setViewPrint(true)
+  }
+
   const offset = currentPage * itemsPerPage;
   const currentItems = getTableData?.slice(offset, offset + itemsPerPage).map((t, i) => {
+    const actualSerialNumber = offset + i + 1;
     return (
       <tr key={t?.id}>
+        <td>{actualSerialNumber}</td>
         {Object.keys(showingFields).map((field) => (
           showingFields[field] && (
             <td key={field} style={getCellStyles(field)}>
@@ -201,6 +221,16 @@ const TableView = () => {
             </td>
           )
         ))}
+        <td className='text-center'>
+          <span style={{ color: "#299205", marginRight: "5px" }}>
+            <MdOutlineRemoveRedEye onClick={() => modalHandler(t)} />
+          </span>
+        </td>
+        <td className='text-center'>
+          <span style={{ color: "#299205", marginRight: "5px" }}>
+            <MdPrint onClick={() => printModalHandler(t)} />
+          </span>
+        </td>
         <td className='text-center'>
           <span style={{ color: "#299205", marginRight: "5px" }}>
             <MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} />
@@ -359,9 +389,134 @@ const TableView = () => {
     };
   }, []);
 
+  const [documentValue, setDocumentValue] = useState(null);
+
+  const { loading: documentLoading, documentLinkData, error } = useSelector((state) => state.postDocumentLink)
+
+  useEffect(() => {
+    if (documentLinkData) {
+
+      if (documentLinkData?.link) {
+        printJS({
+          printable: documentLinkData?.link, onError: ((error) => errorNotify(error)), showModal: true, modalMessage: "Loading Print...."
+        })
+      }
+      else if (documentLinkData?.printLink) {
+        printJS({
+          printable: documentLinkData?.printLink, showModal: true, modalMessage: "Loading Print...."
+        })
+      }
+      dispatch({ type: "DOCUMENT_LINK_RESET" })
+      setViewPrint(false)
+      setDocumentValue(null)
+    }
+
+    return () => {
+      dispatch({ type: "DOCUMENT_LINK_RESET" })
+      setViewPrint(false)
+      setDocumentValue(null)
+    }
+  }, [documentLinkData])
+
+  const options = [
+    { value: "provisionalDocument", label: "Provisional Document" },
+    { value: "duplicateDocument", label: "Duplicate Document" },
+    { value: "originalDocument", label: "Original Document" },
+  ]
+
+  const printRequest = () => {
+    if (!documentValue) {
+      errorNotify("Please select Document Type")
+      return;
+    }
+
+    const currentUser = getCurrentUser();
+
+    const formData = new FormData();
+    formData.append("token", currentUser?.token)
+    formData.append("email", currentUser?.email)
+    formData.append("documentType", documentValue.value)
+    formData.append("documentId", getModalData.id)
+
+    dispatch(getDocumentLink(formData))
+  }
+
+  const closePrintModal = () => {
+    setViewPrint(false)
+    setDocumentValue(null)
+  }
+
+  const modal2 = <Modal centered className='application_attachment' show={viewAttachments} onHide={() => setViewAttachments(false)}>
+    <Modal.Body>
+      <div className='ref_heading'>
+        <h6>{getModalData?.referenceNo}</h6>
+        <IoMdClose onClick={() => setViewAttachments(false)} style={{ cursor: "pointer" }} />
+      </div>
+
+      <Table responsive>
+        <thead style={{ borderTop: "1px solid lightgray" }}>
+          <tr>
+            <th>S No.</th>
+            <th>Attachments Description</th>
+            <th>Attachments Document</th>
+          </tr>
+        </thead>
+        {
+          (getModalData?.attachments && getModalData?.attachments.length > 0) &&
+          <tbody>
+            {
+              getModalData?.attachments?.map((a, i) => {
+                return (
+                  <tr>
+                    <td> {i + 1} </td>
+                    <td> {a?.description} </td>
+                    <td>
+                      <a style={{ textDecoration: "none" }} href={a?.attachment ? a?.attachment : null} target='_blank'>
+                        <MdOutlineFileDownload style={{ fontSize: "22px" }} />
+                      </a>
+                    </td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        }
+      </Table>
+      {
+        (getModalData?.attachments && getModalData?.attachments.length === 0) &&
+        <p className='text-center' style={{ fontWeight: "600", fontSize: "15px", padding: "10px 0" }}>No AttachmentFound</p>
+      }
+    </Modal.Body>
+  </Modal>
+
+  const modal3 = <Modal centered className='application_attachment print_screen' show={viewPrint} onHide={closePrintModal}>
+    <Modal.Body>
+      <div className='ref_heading' style={{ borderBottom: "1px solid lightgrey" }}>
+        <h6>{getModalData?.referenceNo}</h6>
+        <IoMdClose onClick={closePrintModal} style={{ cursor: "pointer" }} />
+      </div>
+      <div className='modal_print mt-3'>
+        <Select options={options} value={documentValue} onChange={(doc) => setDocumentValue(doc)} placeholder="Select Document Type" styles={dashboardColorStyles} />
+
+        <div className='mt-4'>
+          <Row>
+            <Col md={6}>
+              <button onClick={printRequest}> {documentLoading ? <Spinner animation='border' size='sm' /> : 'Print'}</button>
+            </Col>
+            <Col md={6}>
+              <button onClick={closePrintModal}>Discard</button>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    </Modal.Body>
+  </Modal>
+
   return (
     <div className='table_main'>
       {modal}
+      {modal2}
+      {modal3}
       <Announcement />
 
       <div className='application_main'>
@@ -412,7 +567,7 @@ const TableView = () => {
 
             <div className='filteration' ref={columnRef}>
               <span onClick={() => setShowColumns(!showColumns)}><p style={{ width: "80px" }}>Columns</p>
-              <FiColumns /></span>
+                <FiColumns /></span>
 
               {
                 showColumns &&
@@ -453,6 +608,7 @@ const TableView = () => {
               <Table responsive>
                 <thead style={{ borderTop: "1px solid lightgray" }}>
                   <tr>
+                    <th>S No.</th>
                     {Object.keys(showingFields).map((field) => (
                       showingFields[field] && (
                         <th key={field} style={{ width: getColumnWidth(field), paddingLeft: getPaddingLeft(field) }}>
@@ -460,6 +616,8 @@ const TableView = () => {
                         </th>
                       )
                     ))}
+                    <th className='text-center'>Attachments</th>
+                    <th className='text-center'>Print</th>
                     <th className='text-center'>View Download</th>
                     <th className='text-center' style={{ paddingRight: "15px", width: "80px" }}>SignOff Upload / Download</th>
                   </tr>

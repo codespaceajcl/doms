@@ -270,6 +270,72 @@
     margin-top: 3px;
 }
 
+.ref_heading{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 15px;
+}
+
+.ref_heading h6{
+    margin-bottom: 0;
+    font-weight: 700;
+    font-size: 15px;
+    color: #25256e;
+}
+
+.application_attachment .modal-body{
+    padding: 0;
+}
+
+.application_attachment .modal-dialog{
+    max-width: 550px;
+}
+
+.application_attachment.print_screen .modal-dialog{
+    max-width: 500px;
+}
+
+.application_attachment .table th{
+    font-size: 14px;
+    text-align: center;
+}
+
+.application_attachment .table-responsive{
+    padding: 0 15px;
+}
+
+.application_attachment .table th tr{
+    vertical-align: middle;
+}
+
+.application_attachment .table tr td{
+    font-size: 14px;
+    text-align: center;
+}
+
+.application_attachment .modal_print{
+    padding: 15px 30px;
+}
+
+.application_attachment .modal_print button{
+    width: 100%;
+}
+
+.application_attachment .modal_print button{
+    background-color: #739B21;
+    border: none;
+    color: #fff;
+    padding: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 5px;
+}
+
+.application_attachment .modal_print .row .col-md-6:last-child button{
+    background-color: #da3030;
+}
+
 @media (max-width: 550px) {
     .application_main .search_tables div:first-child input.search_no{
         width: 150px;

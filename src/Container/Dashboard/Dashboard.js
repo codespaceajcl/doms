@@ -8,7 +8,7 @@ import Loader from '../../Utils/Loader';
 import {
   Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend,
 } from 'chart.js';
-import { Doughnut, Bar, Line } from 'react-chartjs-2';
+import { Doughnut, Line } from 'react-chartjs-2';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdClose } from "react-icons/md";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
@@ -397,18 +397,18 @@ const Dashboard = () => {
                       <thead>
                         <tr>
                           <th style={{ paddingLeft: "12px", width: "100px" }}>reference no</th>
-                          <th>full name</th>
+                          <th style={{ width: "90px" }}>full name</th>
                           <th style={{ width: "85px" }}>Serial No</th>
                           <th style={{ width: "70px" }} className='text-center'>Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         {
-                          getTableData?.map((t) => {
+                          getTableData?.length > 0 && getTableData?.map((t) => {
                             return (
                               <tr key={t?.id}>
                                 <td style={{ paddingLeft: "12px", width: "100px" }}>{t?.referenceNo}</td>
-                                <td>{t?.fullName}</td>
+                                <td style={{ width: "90px" }}>{t?.fullName}</td>
                                 <td className='text-center'>{t?.serialNo}</td>
                                 <td className='text-center'>
                                   <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
@@ -421,6 +421,7 @@ const Dashboard = () => {
                         }
                       </tbody>
                     </Table>
+                    {getTableData?.length === 0 && <p className='text-center'>No Data Found</p>}
                   </div>
               }
             </div>
@@ -437,7 +438,11 @@ const Dashboard = () => {
                   {
                     dashboardLoading ? <div className='py-5'> <Loader /> </div> :
                       <div className='line_chart'>
-                        <Line options={lineOptions} data={lineData} />
+                        {
+                          dashGetData?.data?.dateWiseTrend.length > 0 ?
+                            <Line options={lineOptions} data={lineData} /> :
+                            <h5>No Data Found</h5>
+                        }
                         {/* <Bar options={warehouseOptions} data={warehouseData} /> */}
                       </div>
                   }
@@ -454,19 +459,26 @@ const Dashboard = () => {
                     dashboardLoading ? <div className='py-5'> <Loader /> </div> :
                       <div className='zone_wise'>
                         <div className='donut_chart'>
-                          <Doughnut data={capacityData} options={options} />
+                          {
+                            dashGetData?.data?.documentsBySector.length > 0 ?
+                              <Doughnut data={capacityData} options={options} /> :
+                              <h5>No Data Found</h5>
+                          }
                         </div>
-                        <div>
-                          <ul>
-                            {
-                              showCityData?.map((s) => {
-                                return (
-                                  <li><div> <span>{s.city}</span>  {s.count} </div></li>
-                                )
-                              })
-                            }
-                          </ul>
-                        </div>
+                        {
+                          dashGetData?.data?.documentsBySector.length > 0 &&
+                          <div>
+                            <ul>
+                              {
+                                showCityData?.map((s) => {
+                                  return (
+                                    <li><div> <span>{s.city}</span>  {s.count} </div></li>
+                                  )
+                                })
+                              }
+                            </ul>
+                          </div>
+                        }
                       </div>
                   }
                 </div>

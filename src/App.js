@@ -44,15 +44,13 @@ const App = () => {
               ) : (
                 <NotFound />
               )
-            }
-          >
+            }>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/registration" element={<Form />} />
             <Route path="/dashboard/application" element={<Table />} />
             <Route path="/dashboard/track-plots" element={<TrackPlot />} />
           </Route>
         )}
-
         <Route path="/" element={<Login />} />
         <Route path="/admin/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
@@ -60,4 +58,4 @@ const App = () => {
     </BrowserRouter>
   )
 }
-export default App
+export default App;

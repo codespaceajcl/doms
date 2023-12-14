@@ -3,11 +3,9 @@ import { Outlet } from "react-router-dom";
 import Header from "../Components/Header/Header";
 import Sidebar from "../Components/Sidebar/Sidebar";
 import NotFound from "../Container/Pages/NotFound/NotFound";
-import { GoHome } from "react-icons/go";
 import { MdOutlineGridView } from "react-icons/md";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { RiLogoutCircleRLine } from "react-icons/ri";
-import { MdOutlineShareLocation } from "react-icons/md";
 
 const AdminLayout = () => {
     const userFound = JSON.parse(localStorage.getItem("user"))

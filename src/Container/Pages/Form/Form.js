@@ -15,7 +15,9 @@ import Loader from '../../../Utils/Loader';
 import Announcement from '../../../Components/Announcement/Announcement';
 import defaultImg from "../../../images/default_image.png";
 import { dashboardColorStyles } from '../../../Utils/Helper';
-import printJS from 'print-js'
+// import printJS from 'print-js';
+// import CryptoJS from 'crypto-js';
+import { encryptWithRSA } from "../../../Components/Encryption/Encryption";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -31,9 +33,9 @@ const RegistrationForm = () => {
   const [tab, setTab] = useState('registration');
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
-  const [printLink, setPrintLink] = useState('')
-  const [printLoader, setPrintLoader] = useState(false)
-  const [showPrintOnce, setShowPrintOnce] = useState(false);
+  // const [printLink, setPrintLink] = useState('')
+  // const [printLoader, setPrintLoader] = useState(false)
+  // const [showPrintOnce, setShowPrintOnce] = useState(false);
   const [no_attachment, setNo_attachment] = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [attachmentData, setAttachmentData] = useState([]);
@@ -47,6 +49,44 @@ const RegistrationForm = () => {
   const { loading: saveLoading, formSaveData, error } = useSelector((state) => state.saveForm)
 
   useEffect(() => {
+    return () => {
+      setTab('registration')
+
+      setFormField({
+        referenceNo: "",
+        serialNo: "",
+        date: '2023-01-01',
+        fullName: "",
+        fatherName: "",
+        address: "",
+        cdaSerialNo: "",
+        videOrderDate: "2023-01-01",
+        plot: "",
+        street: "",
+        sector: "",
+        plotSize: ""
+      })
+      setProfileImage(null)
+      setProfileImagePreview(null)
+      setPreviewPdf('')
+      setNumPages()
+      setPageNumber(1)
+      // setPrintLink('')
+      // setPrintLoader(false)
+      // setShowPrintOnce(false)
+      setNo_attachment(null)
+      setAttachments([])
+      setAttachmentData([])
+      setAttachmentDataPreview([])
+      setCountryOption(options[0])
+      setStateOption({ value: "Punjab", label: "Punjab" })
+      setCityOptions([])
+      setCityOption({ value: "Islamabad", label: "Islamabad" })
+      setFileIndex(null)
+    }
+  }, [])
+
+  useEffect(() => {
     if (formCreateData?.response === 'success') {
       setPreviewPdf(formCreateData?.link)
       dispatch({ type: "FORM_POST_RESET" })
@@ -58,22 +98,22 @@ const RegistrationForm = () => {
     }
   }, [formCreateData])
 
-  useEffect(() => {
-    setTimeout(() => {
-      setPrintLoader(false);
-    }, 5000);
-  }, [printLoader]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setPrintLoader(false);
+  //   }, 5000);
+  // }, [printLoader]);
 
-  useEffect(() => {
-    return () => {
-      setShowPrintOnce(false)
-    }
-  }, [])
+  // useEffect(() => {
+  //   return () => {
+  //     setShowPrintOnce(false)
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (formSaveData?.response === 'success') {
       setTab('submit')
-      setPrintLink(formSaveData?.link)
+      // setPrintLink(formSaveData?.link)
       dispatch({ type: "FORM_SAVE_RESET" })
       successNotify("Application Added Successfully!")
     }
@@ -125,15 +165,22 @@ const RegistrationForm = () => {
   })
 
   const [countryOption, setCountryOption] = useState(options[0]);
-  const [stateOption, setStateOption] = useState([]);
+  const [stateOption, setStateOption] = useState({ value: "Punjab", label: "Punjab" });
   const [cityOptions, setCityOptions] = useState([]);
-  const [cityOption, setCityOption] = useState([]);
+  const [cityOption, setCityOption] = useState({ value: "Islamabad", label: "Islamabad" });
   const [fileIndex, setFileIndex] = useState(null)
+
+  useEffect(() => {
+    const selectedStateCities = cities?.find((item) => item.state === stateOption.value);
+    const cityPresent = selectedStateCities?.city.find((c) => c.value === cityOption.value)
+    setCityOptions(selectedStateCities ? selectedStateCities?.city : []);
+    setCityOption(cityPresent ? { value: cityOption.value, label: cityOption.value } : null)
+  }, [stateOption])
 
   const handleStateChange = (selectedState) => {
     setStateOption(selectedState);
 
-    const selectedStateCities = cities.find((item) => item.state === selectedState.value);
+    const selectedStateCities = cities.find((item) => (item.state === selectedState.value) || (item.state === stateOption.value));
     setCityOptions(selectedStateCities ? selectedStateCities.city : []);
   };
 
@@ -173,10 +220,14 @@ const RegistrationForm = () => {
 
   const previewHandler = () => {
 
-    // console.log(attachmentData)
-
     const isAttachmentDataValid = attachmentData.every((attachment) => {
-      return attachment.attachmentDescription && attachment.attachmentDocument;
+      const descriptionKey = Object.keys(attachment).find(key => key.includes('Description'));
+      const documentKey = Object.keys(attachment).find(key => key.includes('Document'));
+
+      const description = attachment[descriptionKey];
+      const document = attachment[documentKey];
+
+      return description && document;
     });
 
     const isAnyFieldEmpty = Object.values(formField).some(value => value === "");
@@ -189,15 +240,21 @@ const RegistrationForm = () => {
 
     for (const key in formField) {
       if (formField.hasOwnProperty(key)) {
-        registerData.append(key, formField[key]);
+        if (key !== 'referenceNo') {
+          registerData.append(key, formField[key]);
+        }
       }
     }
+
+    // const encryptedReferenceNo = encryptWithRSA(formField.referenceNo);
+    // registerData.append('referenceNo', encryptedReferenceNo);
+
+    registerData.append('referenceNo', formField.referenceNo);
+
     registerData.append("profile", profileImage)
     registerData.append("country", countryOption.value)
     registerData.append("state", stateOption.value)
     registerData.append("city", cityOption.value)
-    registerData.append("no_attachment", no_attachment)
-    registerData.append("attachments", attachmentData)
     registerData.append("token", currentUser.token)
     registerData.append("email", currentUser.email)
 
@@ -206,8 +263,18 @@ const RegistrationForm = () => {
   }
 
   const saveFormHandler = () => {
+    const isAttachmentDataValid = attachmentData.every((attachment) => {
+      const descriptionKey = Object.keys(attachment).find(key => key.includes('Description'));
+      const documentKey = Object.keys(attachment).find(key => key.includes('Document'));
+
+      const description = attachment[descriptionKey];
+      const document = attachment[documentKey];
+
+      return description && document;
+    });
+
     const isAnyFieldEmpty = Object.values(formField).some(value => value === "");
-    if (isAnyFieldEmpty || !profileImage || stateOption.length === 0 || cityOption.length === 0) {
+    if (!isAttachmentDataValid || isAnyFieldEmpty || !profileImage || stateOption.length === 0 || cityOption.length === 0) {
       errorNotify("Please Filled up all fields");
       return;
     }
@@ -216,13 +283,31 @@ const RegistrationForm = () => {
 
     for (const key in formField) {
       if (formField.hasOwnProperty(key)) {
-        registerData.append(key, formField[key]);
+        if (key !== 'referenceNo') {
+          registerData.append(key, formField[key]);
+        }
       }
     }
+
+    // const encryptedReferenceNo = encryptWithRSA(formField.referenceNo);
+    // registerData.append('referenceNo', encryptedReferenceNo);
+
+    registerData.append('referenceNo', formField.referenceNo);
+
     registerData.append("profile", profileImage)
     registerData.append("country", countryOption.value)
     registerData.append("state", stateOption.value)
     registerData.append("city", cityOption.value)
+    registerData.append("noOfAttachments", parseInt(no_attachment))
+
+    attachmentData.forEach((attachment, index) => {
+      const documentKey = `attachment${index + 1}Document`;
+      const descriptionKey = `attachment${index + 1}Description`;
+
+      registerData.append(documentKey, attachment[documentKey]);
+      registerData.append(descriptionKey, attachment[descriptionKey]);
+    });
+
     registerData.append("token", currentUser.token)
     registerData.append("email", currentUser.email)
 
@@ -242,27 +327,34 @@ const RegistrationForm = () => {
     }
   }
 
-  const printHandler = () => {
-    setPrintLoader(true)
-    printJS(printLink)
+  // const printHandler = () => {
+  //   setPrintLoader(true)
+  //   printJS(printLink)
 
-    setTimeout(() => {
-      setShowPrintOnce(true);
-    }, 5000)
-  }
+  //   setTimeout(() => {
+  //     setShowPrintOnce(true);
+  //   }, 5000)
+  // }
 
   const handleNoAttachmentsChange = (e) => {
-    const value = parseInt(e.target.value);
+    let value = parseInt(e.target.value);
+    value = Math.min(Math.max(value, 1), 20);
+
     setNo_attachment(value);
     setAttachments(Array.from({ length: value }, (_, index) => index));
-    setAttachmentData(Array.from({ length: value }, (_, index) => ({
-      attachmentDocument: null,
-      attachmentDescription: ''
-    })));
-    setAttachmentDataPreview(Array.from({ length: value }, (_, index) => ({
-      attachmentDocument: null,
-      attachmentpreview: null
-    })))
+
+    const newAttachmentData = Array.from({ length: value }, (_, index) => ({
+      [`attachment${index + 1}Document`]: null,
+      [`attachment${index + 1}Description`]: '',
+    }));
+    setAttachmentData(newAttachmentData);
+
+    const newAttachmentDataPreview = Array.from({ length: value }, (_, index) => ({
+      [`attachment${index + 1}Document`]: null,
+      [`attachment${index + 1}Preview`]: null,
+    }));
+
+    setAttachmentDataPreview(newAttachmentDataPreview);
   };
 
   const handleAttachmentTextChange = (index, field, value) => {
@@ -283,17 +375,55 @@ const RegistrationForm = () => {
     }
     setAttachmentData((prevData) => {
       const updatedData = [...prevData];
-      updatedData[fileIndex][field] = file;
+      updatedData[fileIndex][`attachment${fileIndex + 1}Document`] = file;
       return updatedData;
     });
 
     setAttachmentDataPreview((prevData) => {
       const updatedData = [...prevData];
-      updatedData[fileIndex][field] = file.name;
-      updatedData[fileIndex]['attachmentpreview'] = URL.createObjectURL(file);
+      updatedData[fileIndex][`attachment${fileIndex + 1}Document`] = file.name;
+      updatedData[fileIndex][`attachment${fileIndex + 1}Preview`] = URL.createObjectURL(file);
       return updatedData;
     });
   };
+
+  // console.log(attachmentDataPreview)
+
+  const removeHandler = () => {
+    setTab('registration')
+
+    setFormField({
+      referenceNo: "",
+      serialNo: "",
+      date: '2023-01-01',
+      fullName: "",
+      fatherName: "",
+      address: "",
+      cdaSerialNo: "",
+      videOrderDate: "2023-01-01",
+      plot: "",
+      street: "",
+      sector: "",
+      plotSize: ""
+    })
+    setProfileImage(null)
+    setProfileImagePreview(null)
+    setPreviewPdf('')
+    setNumPages()
+    setPageNumber(1)
+    // setPrintLink('')
+    // setPrintLoader(false)
+    // setShowPrintOnce(false)
+    setNo_attachment(null)
+    setAttachments([])
+    setAttachmentData([])
+    setAttachmentDataPreview([])
+    setCountryOption(options[0])
+    setStateOption({ value: "Punjab", label: "Punjab" })
+    setCityOptions([])
+    setCityOption({ value: "Islamabad", label: "Islamabad" })
+    setFileIndex(null)
+  }
 
   return (
     <div className='form_main'>
@@ -320,8 +450,7 @@ const RegistrationForm = () => {
 
       <div className='tab_show'>
         {
-          (tab === 'registration' || tab === 'preview') &&
-          <div className='registration_form'>
+          (tab === 'registration' || tab === 'preview') && <div className='registration_form'>
 
             <div className='heading'>
               <h5>REGISTRATION</h5>
@@ -505,25 +634,31 @@ const RegistrationForm = () => {
               <Row>
                 {
                   attachments.map((index) => (
-                    <Col md={6} key={index}>
+                    <Col md={4} key={index}>
                       <Form.Group className="mb-3">
                         <Form.Label>{`Attachment ${index + 1} Description & Document`}</Form.Label>
                         <div className='attachment_doc'>
-                          <Form.Control type="text" placeholder={`Enter Attachment ${index + 1} Description`}
-                            onChange={(e) => handleAttachmentTextChange(index, 'attachmentDescription', e.target.value)} />
-                          <span onClick={() => handleDocClick(index)}>
-                            Choose File
-                            <input ref={docInputRef} type="file"
-                              onChange={(e) => handleAttachmentFileChange(index, 'attachmentDocument', e.target.files[0])}
-                              style={{ display: "none" }} />
-                          </span>
+                          <Row>
+                            <Col md={8}>
+                              <Form.Control as="textarea" placeholder={`Enter Attachment ${index + 1} Description`}
+                                onChange={(e) => handleAttachmentTextChange(index, `attachment${index + 1}Description`, e.target.value)} />
+                            </Col>
+                            <Col md={4} style={{ paddingLeft: "0px" }}>
+                              <div className='choose_file' onClick={() => handleDocClick(index)}>
+                                Choose File
+                                <input ref={docInputRef} type="file"
+                                  onChange={(e) => handleAttachmentFileChange(index, 'attachmentDocument', e.target.files[0])}
+                                  style={{ display: "none" }} />
+                              </div>
+                            </Col>
+                          </Row>
                         </div>
                       </Form.Group>
 
-                      {attachmentDataPreview && attachmentDataPreview[index]?.attachmentDocument ?
+                      {attachmentDataPreview && attachmentDataPreview[index]?.[`attachment${index + 1}Document`] ?
                         <p className='preview_img_file'>
-                          <a target='_blank' href={attachmentDataPreview[index]?.attachmentpreview}>
-                            {attachmentDataPreview[index]?.attachmentDocument} </a> </p> : null}
+                          <a target='_blank' href={attachmentDataPreview[index]?.[`attachment${index + 1}Preview`]}>
+                            {attachmentDataPreview[index]?.[`attachment${index + 1}Document`]} </a> </p> : null}
                     </Col>
                   ))}
                 <Col md={12}>
@@ -574,7 +709,7 @@ const RegistrationForm = () => {
                   </g>
                 </svg>
                 <h5>Your Form has been submitted <br /> Successfully!</h5>
-                {showPrintOnce === false && (
+                {/* {showPrintOnce === false && (
                   <button
                     className='print_doc'
                     type="button"
@@ -583,16 +718,16 @@ const RegistrationForm = () => {
                   >
                     {printLoader ? <Spinner animation='border' size='sm' /> : "PRINT ORIGINAL DOCUMENT"}
                   </button>
-                )}
+                )} */}
               </div>
 
               <div className='success_btn'>
                 {
                   currentUser?.access === 'masterAdmin' ?
                     <button onClick={() => navigate('/dashboard')}>Go To Dashboard</button> :
-                    <button onClick={() => setTab('registration')}>Fill again</button>
+                    <button onClick={removeHandler}>Fill again</button>
                 }
-                <button className='discard' onClick={() => setTab('registration')}>Back</button>
+                <button className='discard' onClick={removeHandler}>Back</button>
               </div>
             </div>
           </div>

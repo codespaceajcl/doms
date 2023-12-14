@@ -135,3 +135,33 @@ export const ApplicationUploadReducer = (state = {}, action) => {
             return state;
     }
 }
+
+export const getDocumentLinkReducer = (state = {}, action) => {
+    switch (action.type) {
+        case "DOCUMENT_LINK_REQUEST":
+            return {
+                ...state,
+                loading: true,
+            };
+        case "DOCUMENT_LINK_SUCCESS":
+            return {
+                ...state,
+                loading: false,
+                documentLinkData: action.payload,
+            };
+        case "DOCUMENT_LINK_FAILED":
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+        case "DOCUMENT_LINK_RESET":
+            return {
+                ...state,
+                documentLinkData: null,
+                error: null
+            };
+        default:
+            return state;
+    }
+}
