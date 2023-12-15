@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Col, Row, Form, Spinner } from 'react-bootstrap';
+import { Col, Row, Form, Spinner, Modal } from 'react-bootstrap';
 import { MdClose } from "react-icons/md";
 import './Form.css';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,7 @@ import { dashboardColorStyles } from '../../../Utils/Helper';
 // import printJS from 'print-js';
 // import CryptoJS from 'crypto-js';
 import { encryptWithRSA } from "../../../Components/Encryption/Encryption";
+import testPdf from "../../../images/test_pdf.pdf"
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -89,6 +90,7 @@ const RegistrationForm = () => {
   useEffect(() => {
     if (formCreateData?.response === 'success') {
       setPreviewPdf(formCreateData?.link)
+      // setPreviewPdf(testPdf)
       dispatch({ type: "FORM_POST_RESET" })
     }
     else if (formCreateData?.response === 'error') {
@@ -248,6 +250,10 @@ const RegistrationForm = () => {
 
     // const encryptedReferenceNo = encryptWithRSA(formField.referenceNo);
     // registerData.append('referenceNo', encryptedReferenceNo);
+
+    // for (let v of registerData) {
+    //   console.log(v)
+    // }
 
     registerData.append('referenceNo', formField.referenceNo);
 
@@ -425,8 +431,36 @@ const RegistrationForm = () => {
     setFileIndex(null)
   }
 
+  const modal = <Modal centered className='preview_doc_modal' show={tab === 'preview' ? true : false} onHide={tab === 'preview' ? true : false}>
+    <Modal.Body>
+      <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
+        {
+          loading || saveLoading ? <Loader color={"#fff"} /> : previewPdf?.length > 0 ?
+            <div className='preview_show_data'>
+              <MdClose onClick={() => setTab('registration')} className='close_icon' />
+
+              <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
+                <Page pageNumber={pageNumber} />
+              </Document>
+
+              <div className='pdf_chevron'>
+                <FaChevronLeft onClick={pageDecrease} />
+                <FaChevronRight onClick={pageIncrease} />
+              </div>
+
+              <div className='preview_btn mt-2'>
+                <button onClick={saveFormHandler} disabled={saveLoading}> {saveLoading ? <Spinner animation='border' size='sm' /> : "Save"} </button>
+                <button className='discard' onClick={() => setTab('registration')}>Discard</button>
+              </div>
+            </div> : null
+        }
+      </div>
+    </Modal.Body>
+  </Modal>
+
   return (
     <div className='form_main'>
+      {modal}
       <Announcement />
 
       <Row className="justify-content-center">
@@ -671,7 +705,7 @@ const RegistrationForm = () => {
             </div>
           </div>
         }
-        {
+        {/* {
           tab === 'preview' && <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
             {
               loading || saveLoading ? <Loader color={"#fff"} /> : previewPdf?.length > 0 ?
@@ -694,7 +728,7 @@ const RegistrationForm = () => {
                 </div> : null
             }
           </div>
-        }
+        } */}
         {
           tab === 'submit' && <div className='registration_form'>
             <div style={{ padding: "20px" }}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Col, Form, Row, Table } from 'react-bootstrap';
+import { Col, Form, Modal, Row, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Announcement from '../../Components/Announcement/Announcement'
 import { chartStyle, getCurrentUser } from '../../Utils/Helper';
@@ -312,8 +312,28 @@ const Dashboard = () => {
     ],
   };
 
+  const modal = <Modal centered className='preview_doc_modal' show={showPdf} onHide={() => setShowPdf(false)}>
+    <Modal.Body>
+      <div id='preview_id' className='preview_show' style={{ transition: "all 0.3s ease" }}>
+        <div className='preview_show_data'>
+          <MdClose onClick={() => setShowPdf(false)} className='close_icon' />
+
+          <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
+            <Page pageNumber={pageNumber} />
+          </Document>
+
+          <div className='pdf_chevron'>
+            <FaChevronLeft onClick={pageDecrease} />
+            <FaChevronRight onClick={pageIncrease} />
+          </div>
+        </div>
+      </div>
+    </Modal.Body>
+  </Modal>
+
   return (
     <div>
+      {modal}
       <Announcement />
 
       <div className='dashboard_main'>
@@ -412,7 +432,7 @@ const Dashboard = () => {
                                 <td className='text-center'>{t?.serialNo}</td>
                                 <td className='text-center'>
                                   <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
-                                  <span> <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
+                                  <span> <a style={{ textDecoration: "none", color: "#0d6efd" }} href={t.document ? t.document : null} target='_blank'>
                                     <MdOutlineFileDownload /> </a> </span>
                                 </td>
                               </tr>
@@ -486,7 +506,7 @@ const Dashboard = () => {
             </div>
           </Col>
         </Row>
-        {
+        {/* {
           showPdf && <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
             <div className='preview_show_data'>
               <MdClose onClick={() => setShowPdf(false)} className='close_icon' />
@@ -501,7 +521,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        }
+        } */}
       </div>
     </div>
   )

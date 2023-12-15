@@ -15,6 +15,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import ReactPaginate from 'react-paginate';
 import Announcement from '../../../Components/Announcement/Announcement';
 import './TrackPlots.css';
+import { Modal } from 'react-bootstrap';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -118,8 +119,28 @@ const TrackPlots = () => {
         document.body.removeChild(link);
     };
 
+    const modal = <Modal centered className='preview_doc_modal' show={showPdf} onHide={() => setShowPdf(false)}>
+        <Modal.Body>
+            <div id='preview_id' className='preview_show' style={{ transition: "all 0.3s ease" }}>
+                <div className='preview_show_data'>
+                    <MdClose onClick={() => setShowPdf(false)} className='close_icon' />
+
+                    <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
+                        <Page pageNumber={pageNumber} />
+                    </Document>
+
+                    <div className='pdf_chevron'>
+                        <FaChevronLeft onClick={pageDecrease} />
+                        <FaChevronRight onClick={pageIncrease} />
+                    </div>
+                </div>
+            </div>
+        </Modal.Body>
+    </Modal>
+
     return (
         <div className='table_main'>
+            {modal}
             <Announcement />
 
             <div className='application_main'>
@@ -191,7 +212,7 @@ const TrackPlots = () => {
                         </div>
                 }
 
-                {
+                {/* {
                     showPdf && <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
                         <div className='preview_show_data'>
                             <MdClose onClick={() => setShowPdf(false)} className='close_icon' />
@@ -206,7 +227,7 @@ const TrackPlots = () => {
                             </div>
                         </div>
                     </div>
-                }
+                } */}
             </div>
         </div>
     )

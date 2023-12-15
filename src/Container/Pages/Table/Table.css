@@ -131,6 +131,7 @@
     justify-content: end;
     padding: 10px 30px;
     gap: 12px;
+    margin-bottom: 0;
 }
 
 .pagination .previous.disabled a,

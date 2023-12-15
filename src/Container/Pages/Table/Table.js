@@ -20,6 +20,7 @@ import moment from 'moment';
 import { IoMdClose } from "react-icons/io";
 import Select from "react-select";
 import printJS from 'print-js';
+import testPdf from "../../../images/test_pdf.pdf"
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -64,8 +65,6 @@ const TableView = () => {
   const [viewAttachments, setViewAttachments] = useState(false)
   const [viewPrint, setViewPrint] = useState(false)
   const [getModalData, setGetModalData] = useState({})
-
-  // console.log(getModalData)
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -146,6 +145,7 @@ const TableView = () => {
 
   const previewHandler = (getDoc) => {
     setPreviewPdf(getDoc)
+    // setPreviewPdf(testPdf)
     setShowPdf(true)
   }
 
@@ -236,7 +236,7 @@ const TableView = () => {
             <MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} />
           </span>
           <span>
-            <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
+            <a style={{ textDecoration: "none", color: "#0d6efd" }} href={t.document ? t.document : null} target='_blank'>
               <MdOutlineFileDownload />
             </a>
           </span>
@@ -398,12 +398,12 @@ const TableView = () => {
 
       if (documentLinkData?.link) {
         printJS({
-          printable: documentLinkData?.link, onError: ((error) => errorNotify(error)), showModal: true, modalMessage: "Loading Print...."
+          printable: documentLinkData?.link, onError: ((error) => errorNotify("Error in Printing")), showModal: true, modalMessage: "Loading Print...."
         })
       }
       else if (documentLinkData?.printLink) {
         printJS({
-          printable: documentLinkData?.printLink, showModal: true, modalMessage: "Loading Print...."
+          printable: documentLinkData?.printLink, onError: ((error) => errorNotify("Error in Printing")), showModal: true, modalMessage: "Loading Print...."
         })
       }
       dispatch({ type: "DOCUMENT_LINK_RESET" })
@@ -512,11 +512,33 @@ const TableView = () => {
     </Modal.Body>
   </Modal>
 
+  const modal4 = <Modal centered className='preview_doc_modal' show={showPdf} onHide={() => setShowPdf(false)}>
+    <Modal.Body>
+      <div id='preview_id' className='preview_show' style={{ transition: "all 0.3s ease" }}>
+        <div className='preview_show_data'>
+          <MdClose onClick={() => setShowPdf(false)} className='close_icon' />
+
+          <Document
+            file={previewPdf} onLoadSuccess={onDocumentLoadSuccess}
+            loading={<div style={{ height: "200px", width: "400px", maxWidth: "400px", margin: "auto" }}> <Loader color={"#fff"} /> </div>}>
+            <Page pageNumber={pageNumber} />
+          </Document>
+
+          <div className='pdf_chevron'>
+            <FaChevronLeft onClick={pageDecrease} />
+            <FaChevronRight onClick={pageIncrease} />
+          </div>
+        </div>
+      </div>
+    </Modal.Body>
+  </Modal>
+
   return (
     <div className='table_main'>
       {modal}
       {modal2}
       {modal3}
+      {modal4}
       <Announcement />
 
       <div className='application_main'>
@@ -647,12 +669,14 @@ const TableView = () => {
               }
             </div>
         }
-        {
-          showPdf && <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
+        {/* {
+          showPdf && <div id='preview_id' className='preview_show' style={{ transition: "all 0.3s ease" }}>
             <div className='preview_show_data'>
               <MdClose onClick={() => setShowPdf(false)} className='close_icon' />
 
-              <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
+              <Document
+                file={previewPdf} onLoadSuccess={onDocumentLoadSuccess}
+                loading={<div style={{ height: "200px", width: "400px" }}> <Loader color={"#fff"} /> </div>}>
                 <Page pageNumber={pageNumber} />
               </Document>
 
@@ -662,7 +686,7 @@ const TableView = () => {
               </div>
             </div>
           </div>
-        }
+        } */}
       </div>
     </div>
   )
