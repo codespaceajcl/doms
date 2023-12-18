@@ -312,13 +312,13 @@ const Dashboard = () => {
     ],
   };
 
-  const modal = <Modal centered className='preview_doc_modal' show={showPdf} onHide={() => setShowPdf(false)}>
+  const modal = <Modal centered className='preview_doc_modal' show={showPdf}>
     <Modal.Body>
       <div id='preview_id' className='preview_show' style={{ transition: "all 0.3s ease" }}>
         <div className='preview_show_data'>
           <MdClose onClick={() => setShowPdf(false)} className='close_icon' />
 
-          <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
+          <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<div style={{ height: "200px" }}> <Loader color={"#fff"} /> </div>}>
             <Page pageNumber={pageNumber} />
           </Document>
 

@@ -67,11 +67,11 @@ const Header = () => {
                                 </div>
                                 <div className='user_img'>
                                     <img src={userAvatar} alt='' />
-                                    <NavDropdown title="" id="basic-nav-dropdown">
+                                    {/* <NavDropdown title="" id="basic-nav-dropdown">
                                         <NavDropdown.Item onClick={logoutHandler}>
                                             <Link>Logout</Link>
                                         </NavDropdown.Item>
-                                    </NavDropdown>
+                                    </NavDropdown> */}
                                 </div>
                             </div>
                         </Nav>

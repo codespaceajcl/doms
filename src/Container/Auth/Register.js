@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AuthRegister } from '../../Redux/Action/auth';
 import cdaLogo from "../../images/cda_white_logo.png";
 import './Auth.css';
+import { encryptWithRSA } from '../../Components/Encryption/Encryption';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -55,17 +56,18 @@ const Register = () => {
             return
         }
 
-        if(access !== 'admin' || access !== 'user' || access !== 'masterAdmin'){
-            errorNotify("Access must be only Admin, User, MasterAdmin")
-            return
-        }
+        // if (access !== 'admin' || access !== 'user' || access !== 'masterAdmin') {
+        //     errorNotify("Access must be only Admin, User, MasterAdmin")
+        //     return
+        // }
 
         const formData = new FormData();
+
         formData.append("name", name)
         formData.append("email", email)
         formData.append("password", password)
         formData.append("designation", designation)
-        formData.append("access", access)
+        formData.append("access", 'user')
         formData.append("contact", contact)
         formData.append("cnic", cnic)
         formData.append("address", address)

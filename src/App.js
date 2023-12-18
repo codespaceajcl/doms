@@ -18,7 +18,7 @@ const App = () => {
   const userFound = JSON.parse(localStorage.getItem("user"));
 
   return (
-    <BrowserRouter basename="/doms">
+    <BrowserRouter basename="/doms/system">
       <ToastContainer
         position="top-center"
         autoClose={3000}

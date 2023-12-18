@@ -7,36 +7,31 @@ import { errorNotify, successNotify } from '../../../Utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormCreate, FormSave } from '../../../Redux/Action/Dashboard';
 import Select from "react-select"
-import { pdfjs } from 'react-pdf';
-import { Document, Page } from 'react-pdf';
-import { FaChevronRight } from "react-icons/fa";
-import { FaChevronLeft } from "react-icons/fa";
+import { Document, Page, pdfjs } from 'react-pdf';
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import Loader from '../../../Utils/Loader';
 import Announcement from '../../../Components/Announcement/Announcement';
 import defaultImg from "../../../images/default_image.png";
 import { dashboardColorStyles } from '../../../Utils/Helper';
-// import printJS from 'print-js';
-// import CryptoJS from 'crypto-js';
 import { encryptWithRSA } from "../../../Components/Encryption/Encryption";
-import testPdf from "../../../images/test_pdf.pdf"
+import { decryptWithRSA } from '../../../Components/Decryption/Decryption';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentUser = JSON.parse(localStorage.getItem("user"))
   const fileInputRef = useRef(null);
   const docInputRef = useRef(null);
+
+  const currentUser = JSON.parse(localStorage.getItem("user"))
+
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [previewPdf, setPreviewPdf] = useState('')
   const [tab, setTab] = useState('registration');
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
-  // const [printLink, setPrintLink] = useState('')
-  // const [printLoader, setPrintLoader] = useState(false)
-  // const [showPrintOnce, setShowPrintOnce] = useState(false);
   const [no_attachment, setNo_attachment] = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [attachmentData, setAttachmentData] = useState([]);
@@ -100,24 +95,19 @@ const RegistrationForm = () => {
     }
   }, [formCreateData])
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setPrintLoader(false);
-  //   }, 5000);
-  // }, [printLoader]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     setShowPrintOnce(false)
-  //   }
-  // }, [])
-
   useEffect(() => {
     if (formSaveData?.response === 'success') {
       setTab('submit')
       // setPrintLink(formSaveData?.link)
       dispatch({ type: "FORM_SAVE_RESET" })
+      setPreviewPdf('')
       successNotify("Application Added Successfully!")
+    }
+    else if(formSaveData?.response === 'error'){
+      errorNotify(formSaveData?.message)
+      setTab("registration")
+      setPreviewPdf('')
+      dispatch({ type: "FORM_SAVE_RESET" })
     }
   }, [formSaveData])
 
@@ -242,25 +232,25 @@ const RegistrationForm = () => {
 
     for (const key in formField) {
       if (formField.hasOwnProperty(key)) {
-        if (key !== 'referenceNo') {
-          registerData.append(key, formField[key]);
+        if (key !== 'serialNo') {
+          let encryptedValue = encryptWithRSA(formField[key]);
+          registerData.append(key, encryptedValue);
         }
       }
     }
 
-    // const encryptedReferenceNo = encryptWithRSA(formField.referenceNo);
-    // registerData.append('referenceNo', encryptedReferenceNo);
-
-    // for (let v of registerData) {
-    //   console.log(v)
-    // }
-
-    registerData.append('referenceNo', formField.referenceNo);
-
+    registerData.append("serialNo", formField.serialNo)
     registerData.append("profile", profileImage)
-    registerData.append("country", countryOption.value)
-    registerData.append("state", stateOption.value)
-    registerData.append("city", cityOption.value)
+
+    const encryptedCountry = encryptWithRSA(countryOption.value);
+    registerData.append("country", encryptedCountry)
+
+    const encryptedState = encryptWithRSA(stateOption.value);
+    registerData.append("state", encryptedState)
+
+    const encryptedCity = encryptWithRSA(cityOption.value);
+    registerData.append("city", encryptedCity)
+
     registerData.append("token", currentUser.token)
     registerData.append("email", currentUser.email)
 
@@ -289,22 +279,27 @@ const RegistrationForm = () => {
 
     for (const key in formField) {
       if (formField.hasOwnProperty(key)) {
-        if (key !== 'referenceNo') {
-          registerData.append(key, formField[key]);
+        if (key !== 'serialNo') {
+          let encryptedValue = encryptWithRSA(formField[key]);
+          registerData.append(key, encryptedValue);
         }
       }
     }
 
-    // const encryptedReferenceNo = encryptWithRSA(formField.referenceNo);
-    // registerData.append('referenceNo', encryptedReferenceNo);
-
-    registerData.append('referenceNo', formField.referenceNo);
+    registerData.append("serialNo", formField.serialNo)
 
     registerData.append("profile", profileImage)
-    registerData.append("country", countryOption.value)
-    registerData.append("state", stateOption.value)
-    registerData.append("city", cityOption.value)
-    registerData.append("noOfAttachments", parseInt(no_attachment))
+
+    const encryptedCountry = encryptWithRSA(countryOption.value);
+    registerData.append("country", encryptedCountry)
+
+    const encryptedState = encryptWithRSA(stateOption.value);
+    registerData.append("state", encryptedState)
+
+    const encryptedCity = encryptWithRSA(cityOption.value);
+    registerData.append("city", encryptedCity)
+
+    registerData.append("noOfAttachments", no_attachment)
 
     attachmentData.forEach((attachment, index) => {
       const documentKey = `attachment${index + 1}Document`;
@@ -314,8 +309,8 @@ const RegistrationForm = () => {
       registerData.append(descriptionKey, attachment[descriptionKey]);
     });
 
-    registerData.append("token", currentUser.token)
     registerData.append("email", currentUser.email)
+    registerData.append("token", currentUser.token)
 
     dispatch(FormSave(registerData))
 
@@ -332,15 +327,6 @@ const RegistrationForm = () => {
       setPageNumber(pageNumber + 1)
     }
   }
-
-  // const printHandler = () => {
-  //   setPrintLoader(true)
-  //   printJS(printLink)
-
-  //   setTimeout(() => {
-  //     setShowPrintOnce(true);
-  //   }, 5000)
-  // }
 
   const handleNoAttachmentsChange = (e) => {
     let value = parseInt(e.target.value);
@@ -391,9 +377,9 @@ const RegistrationForm = () => {
       updatedData[fileIndex][`attachment${fileIndex + 1}Preview`] = URL.createObjectURL(file);
       return updatedData;
     });
-  };
 
-  // console.log(attachmentDataPreview)
+    setFileIndex(null)
+  };
 
   const removeHandler = () => {
     setTab('registration')
@@ -431,7 +417,7 @@ const RegistrationForm = () => {
     setFileIndex(null)
   }
 
-  const modal = <Modal centered className='preview_doc_modal' show={tab === 'preview' ? true : false} onHide={tab === 'preview' ? true : false}>
+  const modal = <Modal centered className='preview_doc_modal' show={tab === 'preview' ? true : false}>
     <Modal.Body>
       <div className='preview_show' style={{ transition: "all 0.3s ease" }}>
         {
@@ -439,7 +425,7 @@ const RegistrationForm = () => {
             <div className='preview_show_data'>
               <MdClose onClick={() => setTab('registration')} className='close_icon' />
 
-              <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
+              <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<div style={{ height: "200px" }}> <Loader color={"#fff"} /> </div>}>
                 <Page pageNumber={pageNumber} />
               </Document>
 

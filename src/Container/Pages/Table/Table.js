@@ -1,26 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Table.css';
-import Table from 'react-bootstrap/Table';
-import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdOutlineFileUpload, MdPrint } from "react-icons/md";
+import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdOutlineFileUpload, MdPrint, MdClose } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux';
 import { ApplicationUpload, applicationGet, getDocumentLink } from '../../../Redux/Action/Dashboard';
 import Loader from '../../../Utils/Loader';
 import { dashboardColorStyles, getCurrentUser } from '../../../Utils/Helper';
-import { pdfjs } from 'react-pdf';
-import { MdClose } from "react-icons/md";
-import { Document, Page } from 'react-pdf';
-import { FaChevronRight } from "react-icons/fa";
-import { FaChevronLeft } from "react-icons/fa";
+import { Document, Page, pdfjs } from 'react-pdf';
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import ReactPaginate from 'react-paginate';
 import Announcement from '../../../Components/Announcement/Announcement';
-import { Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
+import { Col, Form, Modal, Row, Spinner, Table } from 'react-bootstrap';
 import { errorNotify, successNotify } from '../../../Utils/Toast';
 import { FiColumns } from "react-icons/fi";
 import moment from 'moment';
 import { IoMdClose } from "react-icons/io";
 import Select from "react-select";
 import printJS from 'print-js';
-import testPdf from "../../../images/test_pdf.pdf"
+import { decryptWithRSA } from '../../../Components/Decryption/Decryption';
+import { encryptWithRSA } from '../../../Components/Encryption/Encryption';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -81,6 +78,19 @@ const TableView = () => {
 
     dispatch(applicationGet(formData))
 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+
+  }, [])
+
+  useEffect(() => {
+    const encpData = encryptWithRSA("Sohaib123")
+    console.log(encpData, "ENCRYPTION")
+
+    const getData = decryptWithRSA(encpData)
+    console.log(getData, "GET DRCYPT")
   }, [])
 
   useEffect(() => {
@@ -236,7 +246,7 @@ const TableView = () => {
             <MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} />
           </span>
           <span>
-            <a style={{ textDecoration: "none", color: "#0d6efd" }} href={t.document ? t.document : null} target='_blank'>
+            <a style={{ color: "rgb(13, 110, 253)", textDecoration: "none", color: "#0d6efd" }} href={t.document ? t.document : null} target='_blank'>
               <MdOutlineFileDownload />
             </a>
           </span>
@@ -382,13 +392,6 @@ const TableView = () => {
     }
   };
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   const [documentValue, setDocumentValue] = useState(null);
 
   const { loading: documentLoading, documentLinkData, error } = useSelector((state) => state.postDocumentLink)
@@ -512,7 +515,7 @@ const TableView = () => {
     </Modal.Body>
   </Modal>
 
-  const modal4 = <Modal centered className='preview_doc_modal' show={showPdf} onHide={() => setShowPdf(false)}>
+  const modal4 = <Modal centered className='preview_doc_modal' show={showPdf}>
     <Modal.Body>
       <div id='preview_id' className='preview_show' style={{ transition: "all 0.3s ease" }}>
         <div className='preview_show_data'>

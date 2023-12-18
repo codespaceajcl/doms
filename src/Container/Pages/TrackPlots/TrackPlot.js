@@ -82,7 +82,7 @@ const TrackPlots = () => {
                 <td>{t?.fullName} {t?.fatherName}</td>
                 <td className='text-center'>
                     <span style={{ color: "#299205", marginRight: "5px" }}><MdOutlineRemoveRedEye onClick={t.document ? () => previewHandler(t.document) : null} /></span>
-                    <span> <a style={{ textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
+                    <span> <a style={{ color: "rgb(13, 110, 253)", textDecoration: "none" }} href={t.document ? t.document : null} target='_blank'>
                         <MdOutlineFileDownload /> </a> </span>
                 </td>
             </tr>
@@ -119,13 +119,13 @@ const TrackPlots = () => {
         document.body.removeChild(link);
     };
 
-    const modal = <Modal centered className='preview_doc_modal' show={showPdf} onHide={() => setShowPdf(false)}>
+    const modal = <Modal centered className='preview_doc_modal' show={showPdf}>
         <Modal.Body>
             <div id='preview_id' className='preview_show' style={{ transition: "all 0.3s ease" }}>
                 <div className='preview_show_data'>
                     <MdClose onClick={() => setShowPdf(false)} className='close_icon' />
 
-                    <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<Loader color={"#fff"} />}>
+                    <Document file={previewPdf} onLoadSuccess={onDocumentLoadSuccess} loading={<div style={{ height: "200px" }}> <Loader color={"#fff"} /> </div>}>
                         <Page pageNumber={pageNumber} />
                     </Document>
 
@@ -232,5 +232,4 @@ const TrackPlots = () => {
         </div>
     )
 }
-
-export default TrackPlots
+export default TrackPlots;
