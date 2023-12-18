@@ -1,7 +1,7 @@
 {
   "name": "e-service",
   "version": "0.1.0",
-  "homepage": "https://crms.ajcl.net/doms/system",
+  "homepage": "https://codespaceajcl.github.io/doms",
   "proxy": "https://crms.ajcl.net",
   "private": false,
   "dependencies": {
