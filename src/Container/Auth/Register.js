@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AuthRegister } from '../../Redux/Action/auth';
 import cdaLogo from "../../images/cda_white_logo.png";
 import './Auth.css';
-import { encryptWithRSA } from '../../Components/Encryption/Encryption';
 
 const Register = () => {
     const navigate = useNavigate();

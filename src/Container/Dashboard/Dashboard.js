@@ -14,6 +14,7 @@ import { MdOutlineRemoveRedEye, MdOutlineFileDownload, MdClose } from "react-ico
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import Select from "react-select";
 import './Dashboard.css';
+import CryptoJS from 'crypto-js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -31,6 +32,14 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  let password = "lazydog";
+  let salt = "salt";
+  let iterations = 128;
+
+  let bytes = CryptoJS.PBKDF2(password, salt, { keySize: 48, iterations: iterations });
+  let iv = CryptoJS.enc.Hex.parse(bytes.toString().slice(0, 32));
+  let key = CryptoJS.enc.Hex.parse(bytes.toString().slice(32, 96));
+
   const dispatch = useDispatch();
   const heightRef = useRef();
   const buttonRef = useRef(null);
@@ -74,7 +83,7 @@ const Dashboard = () => {
   }, [])
 
   useEffect(() => {
-    setGetTableData(tableGetData?.data)
+    setGetTableData(tableGetData)
   }, [tableGetData])
 
   const handleCheckboxChange = (fieldName) => {
@@ -82,7 +91,7 @@ const Dashboard = () => {
       ? selectedFields.filter((field) => field !== fieldName)
       : [...selectedFields, fieldName];
 
-    const filteredData = tableGetData?.data?.filter((t) =>
+    const filteredData = tableGetData?.filter((t) =>
       updatedFields.some(
         (field) =>
           t[field] &&
@@ -98,11 +107,11 @@ const Dashboard = () => {
     const searchTerm = e.target.value.toLowerCase();
 
     if (!searchTerm) {
-      setGetTableData(tableGetData?.data);
+      setGetTableData(tableGetData);
     }
 
     else if (getTableData) {
-      const filteredData = tableGetData?.data?.filter((t) =>
+      const filteredData = tableGetData?.filter((t) =>
         selectedFields.some(
           (field) =>
             t[field] &&
@@ -201,7 +210,7 @@ const Dashboard = () => {
     return uniqueCountries;
   }, new Set()) : []
 
-  const cityOptionsArray = cityOptions ? Array.from(cityOptions).map(country => ({ value: country, label: country })) : []
+  const cityOptionsArray = cityOptions ? Array.from(cityOptions).map(country => ({ value: CryptoJS.AES.decrypt(country, key, { iv: iv }).toString(CryptoJS.enc.Utf8), label: CryptoJS.AES.decrypt(country, key, { iv: iv }).toString(CryptoJS.enc.Utf8) })) : []
 
   // const [stateOption, setStateOption] = useState({ value: "Pakistan", label: "Pakistan" })
   const [cityOption, setCityOption] = useState({ value: "Islamabad", label: "Islamabad" })
@@ -232,7 +241,7 @@ const Dashboard = () => {
 
   useEffect(() => {
 
-    const filteredArrCity = dashGetData ? dashGetData?.data?.documentsBySector?.filter(item => item?.city === cityOption?.value) : []
+    const filteredArrCity = dashGetData ? dashGetData?.data?.documentsBySector?.filter(item => CryptoJS.AES.decrypt(item?.city, key, { iv: iv }).toString(CryptoJS.enc.Utf8) === cityOption?.value) : []
     const result = filteredArrCity?.map(item => ({ city: item?.sector, count: item?.count }));
     setShowCityData(result)
 
@@ -297,7 +306,7 @@ const Dashboard = () => {
 
   };
 
-  const labels = dashGetData?.data?.dateWiseTrend?.sort((a, b) => a.date - b.date)?.map((t) => t?.date)
+  const labels = dashGetData?.data?.dateWiseTrend?.sort((a, b) => a.date - b.date)?.map((t) => CryptoJS.AES.decrypt(t?.date, key, { iv: iv }).toString(CryptoJS.enc.Utf8))
 
   const lineData = {
     labels: labels,
@@ -492,7 +501,7 @@ const Dashboard = () => {
                               {
                                 showCityData?.map((s) => {
                                   return (
-                                    <li><div> <span>{s.city}</span>  {s.count} </div></li>
+                                    <li><div> <span>{CryptoJS.AES.decrypt(s.city, key, { iv: iv }).toString(CryptoJS.enc.Utf8)}</span>  {s.count} </div></li>
                                   )
                                 })
                               }

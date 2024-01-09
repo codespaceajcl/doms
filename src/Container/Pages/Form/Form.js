@@ -14,7 +14,6 @@ import Announcement from '../../../Components/Announcement/Announcement';
 import defaultImg from "../../../images/default_image.png";
 import { dashboardColorStyles } from '../../../Utils/Helper';
 import { encryptWithRSA } from "../../../Components/Encryption/Encryption";
-import { decryptWithRSA } from '../../../Components/Decryption/Decryption';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -41,7 +40,7 @@ const RegistrationForm = () => {
     setNumPages(numPages);
   }
 
-  const { loading, formCreateData } = useSelector((state) => state.postForm)
+  const { loading, formCreateData, createError } = useSelector((state) => state.postForm)
   const { loading: saveLoading, formSaveData, error } = useSelector((state) => state.saveForm)
 
   useEffect(() => {
@@ -93,6 +92,11 @@ const RegistrationForm = () => {
       setTab("registration")
       dispatch({ type: "FORM_POST_RESET" })
     }
+    else if (createError) {
+      errorNotify('error in saving')
+      setTab("registration")
+      dispatch({ type: "FORM_POST_RESET" })
+    }
   }, [formCreateData])
 
   useEffect(() => {
@@ -103,8 +107,14 @@ const RegistrationForm = () => {
       setPreviewPdf('')
       successNotify("Application Added Successfully!")
     }
-    else if(formSaveData?.response === 'error'){
+    else if (formSaveData?.response === 'error') {
       errorNotify(formSaveData?.message)
+      setTab("registration")
+      setPreviewPdf('')
+      dispatch({ type: "FORM_SAVE_RESET" })
+    }
+    else if (error) {
+      errorNotify('error in saving')
       setTab("registration")
       setPreviewPdf('')
       dispatch({ type: "FORM_SAVE_RESET" })
@@ -232,14 +242,17 @@ const RegistrationForm = () => {
 
     for (const key in formField) {
       if (formField.hasOwnProperty(key)) {
-        if (key !== 'serialNo') {
+        if (key !== 'serialNo' && key !== 'referenceNo') {
           let encryptedValue = encryptWithRSA(formField[key]);
           registerData.append(key, encryptedValue);
         }
       }
     }
 
+    registerData.append("referenceNo", formField.referenceNo)
+
     registerData.append("serialNo", formField.serialNo)
+
     registerData.append("profile", profileImage)
 
     const encryptedCountry = encryptWithRSA(countryOption.value);
@@ -279,7 +292,7 @@ const RegistrationForm = () => {
 
     for (const key in formField) {
       if (formField.hasOwnProperty(key)) {
-        if (key !== 'serialNo') {
+        if (key !== 'serialNo' && key !== 'referenceNo') {
           let encryptedValue = encryptWithRSA(formField[key]);
           registerData.append(key, encryptedValue);
         }
@@ -287,6 +300,7 @@ const RegistrationForm = () => {
     }
 
     registerData.append("serialNo", formField.serialNo)
+    registerData.append("referenceNo", formField.referenceNo)
 
     registerData.append("profile", profileImage)
 

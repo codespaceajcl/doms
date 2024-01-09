@@ -16,8 +16,6 @@ import moment from 'moment';
 import { IoMdClose } from "react-icons/io";
 import Select from "react-select";
 import printJS from 'print-js';
-import { decryptWithRSA } from '../../../Components/Decryption/Decryption';
-import { encryptWithRSA } from '../../../Components/Encryption/Encryption';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -86,15 +84,7 @@ const TableView = () => {
   }, [])
 
   useEffect(() => {
-    const encpData = encryptWithRSA("Sohaib123")
-    console.log(encpData, "ENCRYPTION")
-
-    const getData = decryptWithRSA(encpData)
-    console.log(getData, "GET DRCYPT")
-  }, [])
-
-  useEffect(() => {
-    setGetTableData(tableGetData?.data)
+    setGetTableData(tableGetData)
   }, [tableGetData])
 
   useEffect(() => {
@@ -119,7 +109,7 @@ const TableView = () => {
       ? selectedFields.filter((field) => field !== fieldName)
       : [...selectedFields, fieldName];
 
-    const filteredData = tableGetData?.data?.filter((t) =>
+    const filteredData = tableGetData?.filter((t) =>
       updatedFields.some(
         (field) =>
           t[field] &&
@@ -135,11 +125,11 @@ const TableView = () => {
     const searchTerm = e.target.value.toLowerCase();
 
     if (!searchTerm) {
-      setGetTableData(tableGetData?.data);
+      setGetTableData(tableGetData);
     }
 
     else if (getTableData) {
-      const filteredData = tableGetData?.data?.filter((t) =>
+      const filteredData = tableGetData?.filter((t) =>
         selectedFields.some(
           (field) =>
             t[field] &&

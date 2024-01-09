@@ -10,8 +10,7 @@ import { pdfjs } from 'react-pdf';
 import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { FaChevronRight } from "react-icons/fa";
-import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import ReactPaginate from 'react-paginate';
 import Announcement from '../../../Components/Announcement/Announcement';
 import './TrackPlots.css';
@@ -55,11 +54,11 @@ const TrackPlots = () => {
     const searchHandler = () => {
 
         if (searchNo?.length === 0) {
-            setGetTableData(tableGetData?.data);
+            setGetTableData(tableGetData);
             return
         }
 
-        const filteredData = tableGetData?.data?.filter((t) => t.plot === searchNo);
+        const filteredData = tableGetData?.filter((t) => t.plot === searchNo);
         setGetTableData(filteredData);
     };
 
